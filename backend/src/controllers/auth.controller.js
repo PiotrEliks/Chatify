@@ -13,15 +13,48 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
-    const user = await User.findOne({ email });
+    const names = fullName.split(' ');
+    if (names.length < 2) {
+      return res.status(400).json({ message: "Please provide both first name and last name" });
+    }
+    const [firstName, lastName] = names;
+    const baseUsername = firstName.slice(0, 3).toLowerCase() + lastName.slice(0, 3).toLowerCase();
 
-    if (user) return res.status(400).json({ message: "Email already exists" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: "Email already exists" });
+
+    const regex = new RegExp(`^${baseUsername}(\\d+)?$`, 'i');
+    const similarUsers = await User.find({ username: regex });
+
+    let username;
+    if (similarUsers.length === 0) {
+      username = baseUsername;
+    } else {
+      let maxNumber = -1;
+      similarUsers.forEach(user => {
+        if (user.username.toLowerCase() === baseUsername.toLowerCase()) {
+          maxNumber = Math.max(maxNumber, 0);
+        } else {
+          const suffix = user.username.slice(baseUsername.length);
+          const num = parseInt(suffix);
+          if (!isNaN(num)) {
+            maxNumber = Math.max(maxNumber, num);
+          }
+        }
+      });
+      username = baseUsername + (maxNumber + 1);
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) return res.status(400).json({ message: "Email already exists" });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
       fullName,
+      username: username,
       email,
       password: hashedPassword
     });
@@ -32,6 +65,7 @@ export const signup = async (req, res) => {
       res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
+        username: newUser.username,
         email: newUser.email,
         profilePic: newUser.profilePic,
       })
