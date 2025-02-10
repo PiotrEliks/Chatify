@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    username: {
+      type: String,
+      required: true,
+      unique: true
+    },
     fullName: {
       type: String,
       required: true,
@@ -19,7 +24,19 @@ const userSchema = new mongoose.Schema(
     profilePic: {
       type: String,
       default: "",
-    }
+    },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      }
+    ],
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      }
+    ]
   },
   { timestamps: true }
 );
