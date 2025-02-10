@@ -79,9 +79,11 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const query = identifier.includes('@') ? { email: identifier } : { username: identifier };
+
+    const user = await User.findOne(query);
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials "});
     }
@@ -96,6 +98,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       _id: user._id,
       fullName: user.fullName,
+      username: user.username,
       email: user.email,
       profilePic: user.profilePic,
     });
