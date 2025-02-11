@@ -6,11 +6,13 @@ import SignUpPage from './pages/SignUpPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SettingsPage from './pages/SettingsPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import ChatPage from './pages/ChatPage.jsx'
 import { axiosInstance } from './lib/axios.js'
 import { useAuthStore } from './store/useAuthStore.js'
 import { useThemeStore } from './store/useThemeStore.js'
 import { Loader } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
+import UserPage from './pages/UserPage.jsx'
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -32,10 +34,12 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={ authUser ? <HomePage /> : <Navigate to="/login" /> }/>
-        <Route path="/signup" element={ !authUser ? <SignUpPage /> : <HomePage /> }/>
-        <Route path="/login" element={ !authUser ? <LoginPage /> : <HomePage /> }/>
+        <Route path="/signup" element={ !authUser ? <SignUpPage /> : <Navigate to="/" /> }/>
+        <Route path="/login" element={ !authUser ? <LoginPage /> : <Navigate to="/" /> }/>
         <Route path="/settings" element={<SettingsPage />}/>
         <Route path="/profile" element={ authUser ? <ProfilePage /> : <Navigate to="/login" /> }/>
+        <Route path="/chat" element={ authUser ? <ChatPage /> : <Navigate to="/login" /> }/>
+        <Route path="/user/:id" element={ authUser ? <UserPage /> : <Navigate to="/login" /> }/>
       </Routes>
       <Toaster />
     </div>

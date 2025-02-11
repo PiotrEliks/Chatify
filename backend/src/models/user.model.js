@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    backgroundPic: {
+      type: String,
+      default: "",
+    },
     friends: [
       {
         type: mongoose.Schema.Types.ObjectId,

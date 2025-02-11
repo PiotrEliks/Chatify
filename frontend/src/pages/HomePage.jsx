@@ -1,24 +1,65 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { useChatStore } from '../store/useChatStore';
-import Sidebar from '../components/Sidebar.jsx';
-import NoChatSelected from '../components/NoChatSelected.jsx';
-import ChatContainer from '../components/ChatContainer.jsx';
+import { useProfileStore } from '../store/useProfileStore';
+import Posts from '../components/Posts.jsx';
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
-  const { selectedUser } = useChatStore();
+  const navigate = useNavigate();
+
+  const { getUsers, users } = useChatStore();
+  const { selectedUser, setSelectedUser } = useProfileStore();
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+
+  const filteredUsers = users.filter(user =>
+    user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="h-screen bg-base-200">
-      <div className="flex items-center justify-center pt-20 px-4">
-        <div className="bg-base-100 rounded-lg shadow-cl w-full max-w-6xl h-[calc(100vh-8rem)]">
-          <div className="flex h-full rounded-lg overflow-hidden">
-            <Sidebar />
-            {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
-          </div>
+      <div className="relative pt-20 px-4">
+        <div className="relative w-full max-w-md mx-auto">
+          <input
+            type="text"
+            placeholder="Find a user..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+          {searchTerm && filteredUsers.length > 0 && (
+            <div className="absolute z-20 left-0 right-0 mt-1 bg-base-100 shadow-lg border border-gray-200 rounded max-h-64 overflow-y-auto">
+              {filteredUsers.map((user) => (
+                <button
+                  key={user._id}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setSearchTerm('');
+                    navigate(`/user/${user._id}`);
+                  }}
+                  className="w-full text-left p-2 hover:bg-base-300 transition-colors flex items-center gap-3"
+                >
+                  <img
+                    src={user.profilePic || "/avatar.png"}
+                    alt={user.fullName}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <span>{user.fullName}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="mt-20">
+          <Posts />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

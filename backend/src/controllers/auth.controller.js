@@ -68,6 +68,7 @@ export const signup = async (req, res) => {
         username: newUser.username,
         email: newUser.email,
         profilePic: newUser.profilePic,
+        backgroundPic: newUser.backgroundPic,
       })
     } else {
       return res.status(400).json({ message: "Invalid user data" });
@@ -121,14 +122,14 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
-    const userId = req.user._id
+    const userId = req.user._id;
     if (!profilePic) {
       return res.status(400).json({ message: "Profile pic is required" });
     }
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
 
-    const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: uploadResponse. secure_url }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: uploadResponse.secure_url }, { new: true });
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -142,6 +143,18 @@ export const checkAuth = (req, res) => {
     res.status(200).json(req.user);
   } catch (error) {
     console.log("Error in checkAuth controller", error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const { id: userToFind } = req.params;
+    const user = await User.findOne({ _id: userToFind }).select("-password");
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.log("Error in getProfile: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
