@@ -45,8 +45,10 @@ export const sendRequest = async (req, res) => {
     const { fromUserId, toUserId } = req.body;
 
     const existingRequest = await FriendRequest.findOne({
-      from: fromUserId,
-      to: toUserId,
+      $or: [
+        { from: fromUserId, to: toUserId },
+        { from: toUserId, to: fromUserId }
+      ],
       status: 'pending'
     });
 
@@ -61,7 +63,7 @@ export const sendRequest = async (req, res) => {
 
     await friendRequest.save();
 
-    io.to(toUserId).emit("friend-request", friendRequest);
+    io.to(toUserId).emit("friend-request-sent", friendRequest);
 
     res.status(200).json({ message: "Request sent" });
   } catch (error) {
@@ -101,6 +103,8 @@ export const acceptRequest = async (req, res) => {
     io.to(friendRequest.from.toString()).emit("friend-request-accepted", friendRequest);
     io.to(friendRequest.to.toString()).emit("friend-request-accepted", friendRequest);
 
+    await FriendRequest.findByIdAndDelete(requestId);
+
     return res.status(200).json({ message: "Request accepted" });
   } catch (error) {
     console.error('Error in acceptRequest: ', error);
@@ -125,6 +129,9 @@ export const rejectRequest = async (req, res) => {
     await friendRequest.save();
 
     io.to(friendRequest.from.toString()).emit("friend-request-rejected", friendRequest);
+    io.to(friendRequest.to.toString()).emit("friend-request-rejected", friendRequest);
+
+    await FriendRequest.findByIdAndDelete(requestId);
 
     return res.status(200).json({ message: "Request rejected" });
   } catch (error) {
@@ -135,7 +142,8 @@ export const rejectRequest = async (req, res) => {
 
 export const getRequestStatus = async (req, res) => {
   try {
-    const { user1, user2 } = req.body;
+    const { user1, user2 } = req.query;
+    console.log(user1, user2);
 
     const friendRequest = await FriendRequest.findOne({
       $or: [

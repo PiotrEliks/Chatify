@@ -12,6 +12,7 @@ export const useProfileStore = create((set, get) => ({
   userProfile: null,
   isFriendBeingAdded: false,
   isFriendBeingDeleted: false,
+  friendRequest: null,
 
   getProfile: async (userId) => {
     set({ isProfileLoading: true });
@@ -22,6 +23,58 @@ export const useProfileStore = create((set, get) => ({
       console.log("Error in getProfile", error);
     } finally {
       set({ isProfileLoading: false });
+    }
+  },
+
+  sendFriendRequest: async (userToAddId, userId) => {
+    set({ isFriendBeingAdded: true });
+    try {
+      const res = await axiosInstance.post("/user/friend-request", {
+        fromUserId: userId,
+        toUserId: userToAddId
+      });
+      toast.success("Invitation sent");
+      set({ friendRequest: res.data.friendRequest });
+    } catch (error) {
+      console.log("Error in sendFriendRequest", error);
+    } finally {
+      set({ isFriendBeingAdded: false });
+    }
+  },
+
+  acceptFriendRequest: async (friendRequestId) => {
+    set({ isFriendBeingAdded: true });
+    try {
+      const res = await axiosInstance.post(`/user/friend-request/${friendRequestId}/accept`);
+      toast.success("Invitation accepted");
+    } catch (error) {
+      console.log("Error in acceptFriendRequest", error);
+    } finally {
+      set({ isFriendBeingAdded: false });
+    }
+  },
+
+  rejectFriendRequest: async (friendRequestId) => {
+    set({ isFriendBeingAdded: true });
+    try {
+      const res = await axiosInstance.post(`/user/friend-request/${friendRequestId}/reject`);
+      toast.success("Invitation rejected");
+    } catch (error) {
+      console.log("Error in rejectFriendRequest", error);
+    } finally {
+      set({ isFriendBeingAdded: false });
+    }
+  },
+
+  getFriendRequestStatus: async (profileUserId, currentUserId) => {
+    try {
+      const res = await axiosInstance.get("/user/friend-request/status", {params: {
+        user1: profileUserId,
+        user2: currentUserId
+      }});
+      set({ friendRequest: res.data.friendRequest });
+    } catch (error) {
+      console.log("Error in getFriendRequestStatus", error);
     }
   },
 

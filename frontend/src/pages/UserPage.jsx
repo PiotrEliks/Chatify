@@ -3,18 +3,26 @@ import { useProfileStore } from '../store/useProfileStore';
 import { useChatStore } from '../store/useChatStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useParams } from "react-router";
-import { UserRoundPlus, UserCheck, UserX, MessageCircleMore } from "lucide-react";
+import { UserRoundPlus, UserCheck, UserX, MessageCircleMore, MailQuestion  } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const UserPage = () => {
   const navigate = useNavigate();
-  const { getProfile, userProfile, isProfileLoading, addFriend, deleteFriend, isFriendBeingAdded, isFriendBeingDeleted } = useProfileStore();
+  const { getProfile, userProfile, isProfileLoading, addFriend, deleteFriend, isFriendBeingAdded, isFriendBeingDeleted, friendRequest, sendFriendRequest, acceptFriendRequest, rejectFriendRequest, getFriendRequestStatus } = useProfileStore();
   const { authUser } = useAuthStore();
   const { setSelectedUser } = useChatStore();
   const params = useParams();
 
   const handleAddfriend = (userToAddId, userId) => {
-    addFriend(userToAddId, userId);
+    sendFriendRequest(userToAddId, userId);
+  };
+
+  const handleAcceptFriendRequest = (friendRequestId) => {
+    acceptFriendRequest(friendRequestId);
+  };
+
+  const handleRejectFriendRequest = (friendRequestId) => {
+    rejectFriendRequest(friendRequestId);
   };
 
   const handleDeletefriend = (userToDeleteId, userId) => {
@@ -26,12 +34,13 @@ const UserPage = () => {
     navigate("/chat");
   };
 
-  console.log(userProfile);
-  console.log(authUser);
-
   useEffect(() => {
     getProfile(params.id);
   }, [getProfile, params, isFriendBeingAdded, isFriendBeingDeleted]);
+
+  useEffect(() => {
+    getFriendRequestStatus(params.id, authUser._id);
+  }, [friendRequest]);
 
   if (isProfileLoading) return <div>Loading...</div>;
 
@@ -57,24 +66,42 @@ const UserPage = () => {
               </div>
             </div>
             <div className="flex flex-row gap-2">
-            {userProfile.friends.includes(authUser._id) ? (
-            <button
-              className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
-              onClick={() => handleDeletefriend(userProfile._id, authUser._id)}
-            >
-              <UserCheck />
-              Friends
-            </button>
-            ) : (
+              {userProfile.friends.includes(authUser._id) && !friendRequest &&
+              <button
+                className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
+                onClick={() => handleDeletefriend(userProfile._id, authUser._id)}
+              >
+                <UserCheck />
+                Friends
+              </button>}
+              {!userProfile.friends.includes(authUser._id) && friendRequest?.status !== "pending" &&
               <button
                 className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
                 onClick={() => handleAddfriend(userProfile._id, authUser._id)}
               >
                 <UserRoundPlus />
-                {console.log(userProfile._id, authUser._id)}
                 Add friend
-              </button>
-            )}
+              </button>}
+              {friendRequest?.status === "pending" && friendRequest?.to === authUser._id &&
+              <div className="flex flex-row gap-2">
+                <button
+                  className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl"
+                  onClick={() => handleAcceptFriendRequest(friendRequest._id)}
+                >
+                  <UserCheck />
+                </button>
+                <button
+                  className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl"
+                  onClick={() => handleRejectFriendRequest(friendRequest._id)}
+                >
+                  <UserX />
+                </button>
+              </div>}
+              {friendRequest?.status === "pending" && friendRequest?.from === authUser._id &&
+              <div className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl gap-1">
+                <MailQuestion />
+                Invitation sent
+              </div>}
             <button
               className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl"
               onClick={() => handleOpenChat(userProfile)}
