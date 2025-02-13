@@ -62,7 +62,7 @@ const UserPage = () => {
               />
               <div className="flex flex-col">
                 <p className="text-2xl font-bold">{userProfile.fullName}</p>
-                <p className="text-sx text-gray-300">{userProfile.friends?.length || 0} {userProfile.friends?.length !== 1 ? "Friends" : "Friend"}</p>
+                <p className="text-xl text-gray-300">{userProfile.friends?.length || 0} {userProfile.friends?.length !== 1 ? "Friends" : "Friend"}</p>
               </div>
             </div>
             <div className="flex flex-row gap-2">

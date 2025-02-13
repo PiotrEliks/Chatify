@@ -143,7 +143,6 @@ export const rejectRequest = async (req, res) => {
 export const getRequestStatus = async (req, res) => {
   try {
     const { user1, user2 } = req.query;
-    console.log(user1, user2);
 
     const friendRequest = await FriendRequest.findOne({
       $or: [
