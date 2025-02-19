@@ -37,9 +37,7 @@ const HomePage = () => {
               className="w-full p-2 border border-gray-300 rounded-xl pl-10 pr-10"
               onKeyDown={(e) => {
                 if (searchTerm && e.key === "Enter")
-                    navigate(`/search/${searchTerm}`, {
-                      state: { filteredUsers }
-                    });
+                    navigate(`/search/${searchTerm}`);
                 }}
             />
            {searchTerm &&

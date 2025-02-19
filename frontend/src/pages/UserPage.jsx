@@ -3,12 +3,12 @@ import { useProfileStore } from '../store/useProfileStore';
 import { useChatStore } from '../store/useChatStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useParams } from "react-router";
-import { UserRoundPlus, UserCheck, UserX, MessageCircleMore, MailQuestion  } from "lucide-react";
+import { UserRoundPlus, UserCheck, UserX, MessageCircleMore, MailQuestion, Loader } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const UserPage = () => {
   const navigate = useNavigate();
-  const { getProfile, userProfile, isProfileLoading, addFriend, deleteFriend, isFriendBeingAdded, isFriendBeingDeleted, friendRequest, sendFriendRequest, acceptFriendRequest, rejectFriendRequest, getFriendRequestStatus } = useProfileStore();
+  const { getProfile, userProfile, isProfileLoading, deleteFriend, isFriendBeingAdded, isFriendBeingDeleted, friendRequest, sendFriendRequest, acceptFriendRequest, rejectFriendRequest, getFriendRequestStatus } = useProfileStore();
   const { authUser } = useAuthStore();
   const { setSelectedUser } = useChatStore();
   const params = useParams();
@@ -42,7 +42,11 @@ const UserPage = () => {
     getFriendRequestStatus(params.id, authUser._id);
   }, [friendRequest]);
 
-  if (isProfileLoading) return <div>Loading...</div>;
+  if (isProfileLoading) return (
+    <div className="flex items-center justify-center h-screen">
+      <Loader className="size-10 animate-bounce" />
+    </div>
+  );
 
   return (
     <div className="h-screen bg-base-200 p-16">

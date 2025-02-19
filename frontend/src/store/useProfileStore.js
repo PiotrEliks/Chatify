@@ -78,19 +78,6 @@ export const useProfileStore = create((set, get) => ({
     }
   },
 
-  addFriend: async (userToAddId, userId) => {
-    set({ isFriendBeingAdded: true });
-    try {
-      const res = await axiosInstance.put(`/user/add/${userToAddId}`, userId);
-      toast.success("Friend has been added");
-    } catch (error) {
-      console.log("Error in addFriend", error);
-      toast.error("Error while adding a friend");
-    } finally {
-      set({ isFriendBeingAdded: false });
-    }
-  },
-
   deleteFriend: async (userToDeleteId, userId) => {
     set({ isFriendBeingDeleted: true });
     try {
