@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './components/Navbar.jsx'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage.jsx'
@@ -14,10 +14,44 @@ import { Loader } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
 import UserPage from './pages/UserPage.jsx'
 import FoundProfilesPage from './pages/FoundProfilesPage.jsx'
+import { useChatStore } from "./store/useChatStore.js";
+import toast from "react-hot-toast";
+import { useSettingsStore } from './store/useSettingsStore.jsx';
 
 const App = () => {
+  const notification = new Audio("/notification-sound.mp3");
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
+
+  const { selectedUser, setMessages } = useChatStore();
+  const socket = useAuthStore((state) => state.socket);
+  const { soundNotification } = useSettingsStore();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (newMessage) => {
+      if (!selectedUser || newMessage.senderId !== selectedUser._id) {
+        if (soundNotification) {
+          notification.play();
+        }
+        new Notification("New message", {
+          body: `Od: ${newMessage.senderId}`});
+      }
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [selectedUser, socket, setMessages, soundNotification]);
+
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
 
   useEffect(() => {
     checkAuth();

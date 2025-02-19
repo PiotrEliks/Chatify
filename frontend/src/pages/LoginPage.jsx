@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { Eye, EyeOff, Loader2, Lock, MessageSquare, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AuthImagePattern from '../components/AuthImagePattern';
+import { useSettingsStore } from '../store/useSettingsStore';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,9 +12,11 @@ const LoginPage = () => {
     password: "",
   });
   const { login, isLoggingIn } = useAuthStore();
+  const { setSoundNotification } = useSettingsStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSoundNotification(true);
     login(formData);
   };
 
