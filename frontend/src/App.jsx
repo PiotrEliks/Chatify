@@ -36,7 +36,7 @@ const App = () => {
           notification.play();
         }
         new Notification("New message", {
-          body: `Od: ${newMessage.senderId}`});
+          body: `From: ${newMessage.senderId}`});
       }
     };
 
