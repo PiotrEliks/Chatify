@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     getUsers();
-  }, [getUsers]);
+  }, [getUsers, selectedUser]);
 
   const filteredUsers = showOnlineOnly
     ? users.filter((user) => onlineUsers.includes(user._id))

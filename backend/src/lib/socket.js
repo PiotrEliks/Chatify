@@ -15,6 +15,10 @@ export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 };
 
+export function getSenderSocketId(userId) {
+  return userSocketMap[userId];
+};
+
 const userSocketMap = {};
 
 io.on("connection", (socket) => {

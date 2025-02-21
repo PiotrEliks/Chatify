@@ -11,7 +11,6 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect }) => {
   useEffect(() => {
     if (!socket) return;
 
-    // Funkcja pobierająca ostatnią wiadomość dla konwersacji między authUser a user
     const fetchLastMessage = async () => {
       try {
         const conversation = await getLastMessage(authUser._id, user._id);
@@ -32,15 +31,12 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect }) => {
       }
     };
 
-    // Handler eventu "newMessage"
     const handleNewMessage = (data) => {
         fetchLastMessage();
     };
 
-    // Nasłuchujemy eventu "newMessage"
     socket.on("newMessage", handleNewMessage);
 
-    // Pobieramy ostatnią wiadomość przy montowaniu
     fetchLastMessage();
 
     return () => {
