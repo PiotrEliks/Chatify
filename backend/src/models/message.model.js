@@ -23,6 +23,12 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    seenBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      }
+    ]
   },
   { timestamps: true }
 );

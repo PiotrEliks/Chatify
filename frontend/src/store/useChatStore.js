@@ -47,11 +47,23 @@ export const useChatStore = create((set, get) => ({
 
   getLastMessage: async (user1, user2) => {
     try {
-      const res = await axiosInstance.get('/messages/conversation', {params: {
+      const res = await axiosInstance.get('/messages/lastMessage', {params: {
         user1: user1,
         user2: user2
       }});
       return res.data;
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  markMessageAsSeen: async (messageId, receiverId, senderId) => {
+    try {
+      const res = await axiosInstance.put('/messages/markAsSeen', {
+        messageId: messageId,
+        receiverId: receiverId,
+        senderId: senderId,
+      });
     } catch (error) {
       toast.error(error.response.data.message);
     }

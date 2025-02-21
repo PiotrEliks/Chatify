@@ -54,6 +54,7 @@ const Sidebar = () => {
               authUser={authUser}
               selected={selectedUser?._id === user._id}
               onSelect={setSelectedUser}
+              onlineUsers={onlineUsers}
             />
           )
         )}

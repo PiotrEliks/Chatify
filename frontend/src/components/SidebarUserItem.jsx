@@ -1,30 +1,42 @@
 import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
+import { format, isToday } from 'date-fns';
 
-const SidebarUserItem = ({ user, authUser, selected, onSelect }) => {
+const SidebarUserItem = ({ user, authUser, selected, onSelect, onlineUsers }) => {
   const { getLastMessage } = useChatStore();
   const [lastMessage, setLastMessage] = useState(null);
   const socket = useAuthStore((state) => state.socket);
 
-  console.log(lastMessage)
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return isToday(date) ? format(date, 'HH:mm') : format(date, 'dd-MM-yy');
+  };
+
   useEffect(() => {
     if (!socket) return;
 
     const fetchLastMessage = async () => {
       try {
         const conversation = await getLastMessage(authUser._id, user._id);
-        if (conversation && conversation.lastMessage) {
+        if (conversation) {
           setLastMessage({
             sender:
-              conversation.lastMessage.senderId === authUser._id
+              conversation.senderId === authUser._id
                 ? "You:"
                 : "",
-            text: conversation.lastMessage.text,
-            timestamp: conversation.lastMessage.timestamp,
+            text: conversation.text,
+            seen:
+              conversation.receiverId === authUser._id && conversation.seenBy.includes(authUser._id)
+                ? true
+                : conversation.senderId === authUser._id && conversation.seenBy.includes(authUser._id)
+                  ? true
+                  : false,
+            time:
+              formatDate(conversation.createdAt)
           });
         } else {
-          setLastMessage({ sender: "", text: "No messages" });
+          setLastMessage({ sender: "", text: "No messages", seen: true, time: null });
         }
       } catch (err) {
         console.error("Error fetching last message:", err);
@@ -36,11 +48,13 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect }) => {
     };
 
     socket.on("newMessage", handleNewMessage);
+    socket.on("messageSeen", handleNewMessage);
 
     fetchLastMessage();
 
     return () => {
       socket.off("newMessage", handleNewMessage);
+      socket.off("messageSeen", handleNewMessage);
     };
   }, [authUser._id, user._id, getLastMessage, socket]);
 
@@ -59,11 +73,18 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect }) => {
           alt={user.name}
           className="w-12 h-12 object-cover rounded-full"
         />
+        {
+          onlineUsers.includes(user._id)
+            ? <span className="absolute bottom-0 right-0 size-3 bg-green-600 rounded-full ring-2 ring-zinc-900"/>
+            : <span className="absolute bottom-0 right-0 size-3 bg-red-600 rounded-full ring-2 ring-zinc-900"/>
+        }
       </div>
       <div className="hidden lg:block text-left min-w-0">
         <div className="font-medium truncate">{user.fullName}</div>
-        <div className="text-sm text-zinc-400">
-          {lastMessage ? `${lastMessage.sender} ${lastMessage.text}` : "Loading..."}
+        <div className={`text-sm ${lastMessage?.seen ? 'text-zinc-400' : 'text-zinc-50 bold'}`}>
+          {lastMessage ?
+            <>
+              {lastMessage.sender} {lastMessage.text} <span className="text-[0.7rem]"> {lastMessage?.time && `• ${lastMessage?.time}`} </span></> : "Loading..."}
         </div>
       </div>
     </button>

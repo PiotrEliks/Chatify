@@ -65,6 +65,9 @@ export const sendMessage = async (req, res) => {
       text,
       image: imageUrl,
       conversationId: conversation._id,
+      seenBy: [
+        senderId
+      ]
     });
 
     await newMessage.save();
@@ -92,15 +95,45 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-export const getConversation = async (req, res) => {
+export const getLastMessage = async (req, res) => {
   try {
     const { user1, user2 } = req.query;
 
-    const conversations = await Conversation.findOne({ users: { $all: [user1, user2]} });
+    const lastMessage = await Message.findOne({
+      $or: [
+        { senderId: user1, receiverId: user2 },
+        { senderId: user2, receiverId: user1 }
+      ]
+    }).sort({ createdAt: -1 });
 
-    return res.status(200).json(conversations);
+    return res.status(200).json(lastMessage);
   } catch (error) {
     console.error('Error in getConversation: ', error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const markMessageAsSeen = async (req, res) => {
+  try {
+    const { messageId, receiverId, senderId } = req.body;
+    const message = await Message.findByIdAndUpdate(
+      messageId,
+      { $addToSet: { seenBy: receiverId } },
+      { new: true }
+    );
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    const senderSocketId = getSenderSocketId(senderId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("messageSeen", message);
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("messageSeen", message);
+    }
+
+    return res.status(200).json(message);
+  } catch (error) {
+    console.error('Error in markMessageAsSeen: ', error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
