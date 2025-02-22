@@ -65,47 +65,6 @@ const ChatContainer = () => {
             messageEndRef={messageEndRef}
             selectedUser={selectedUser}
           />
-          /*<>
-            <div
-              key={message._id}
-              className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-              ref={messageEndRef}
-              onClick={() =>
-                setShowMessageDetails({
-                  messageId: message._id, show: !showMessageDetails.show
-                })}
-            >
-              <div className=" chat-image avatar">
-                <div className="size-10 rounded-full border">
-                  <img
-                    src={
-                      message.senderId === authUser._id
-                        ? authUser.profilePic || "/avatar.png"
-                        : selectedUser.profilePic || "/avatar.png"
-                    }
-                    alt="profile pic"
-                  />
-                </div>
-              </div>
-              <div className="chat-bubble flex flex-col cursor-pointer">
-                {message.image && (
-                  <img
-                    src={message.image}
-                    alt="Attachment"
-                    className="sm:max-w-[200px] rounded-md mb-2"
-                  />
-                )}
-                {message.text && <p>{message.text}</p>}
-              </div>
-
-            </div>
-            {
-              showMessageDetails.messageId === message._id && showMessageDetails.show &&
-                <div className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"} text-xs text-zinc-400`}>
-                  {message.seenBy.includes(message.receiverId) ? `Seen: ${formatDate(message.updatedAt)}` : `Sent: ${formatDate(message.createdAt)}`}
-              </div>
-            }
-          </>*/
         ))}
       </div>
 

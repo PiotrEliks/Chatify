@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useChatStore } from '../store/useChatStore';
-import { format, isToday } from 'date-fns';
+import { format, isToday, isThisYear } from 'date-fns';
 import { useAuthStore } from '../store/useAuthStore';
 
 const ChatContainerMessageItem = ({ message, authUser, messageEndRef, selectedUser }) => {
@@ -57,7 +57,7 @@ const ChatContainerMessageItem = ({ message, authUser, messageEndRef, selectedUs
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return isToday(date) ? format(date, 'HH:mm') : format(date, 'dd-MM-yy');
+    return isToday(date) ? format(date, 'HH:mm') : isThisYear(date) ? format(date, 'dd-LLL') : format(date, 'dd-MM-yy');
   };
 
   return (
