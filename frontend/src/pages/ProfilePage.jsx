@@ -4,8 +4,10 @@ import { Camera, Mail, User} from 'lucide-react'
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const handleImageUpload = async (e) => {
+  const [profileImage, setProfileImage] = useState(null);
+  const [backgroundImage, setBackgroundImage] = useState(null);
+  const [newInformationProvided, setNewInformationProvided] = useState(false);
+  const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -15,9 +17,35 @@ const ProfilePage = () => {
 
     reader.onload = async () => {
       const base64Image = reader.result;
-      setSelectedImage(base64Image);
-      await updateProfile({ profilePic: base64Image });
+      setProfileImage(base64Image);
+      setNewInformationProvided(true);
     }
+  };
+
+  const handleBackgroundImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      setBackgroundImage(base64Image);
+      setNewInformationProvided(true);
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    const updateData = {};
+    if (profileImage) updateData.profilePic = profileImage;
+    if (backgroundImage) updateData.backgroundPic = backgroundImage;
+
+    if (Object.keys(updateData).length === 0) return;
+
+    await updateProfile(updateData);
+    setNewInformationProvided(false);
   };
 
   return (
@@ -33,33 +61,61 @@ const ProfilePage = () => {
             </p>
           </div>
           <div className="flex flex-col items-center gap-4">
-            <div className="relative">
+            <div className="relative flex flex-col items-center justify-center">
+              <div className="absolute">
+                <img
+                  src={profileImage || authUser.profilePic || "/avatar.png"}
+                  alt="Profile"
+                  className="size-32 rounded-full object-cover border-4 ring-2 ring-zinc-900"
+                />
+                <label
+                  htmlFor="avatar-upload"
+                  className={`
+                    absolute bottom-0 right-0
+                    bg-base-content hover:scale-105
+                    p-2 rounded-full cursor-pointer
+                    transition-all duration-200
+                    ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
+                  `}
+                >
+                  <Camera className="w-5 h-5 text-base-200" />
+                  <input
+                    type="file"
+                    id="avatar-upload"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleProfileImageUpload}
+                    disabled={isUpdatingProfile}
+                  />
+                </label>
+              </div>
               <img
-                src={selectedImage || authUser.profilePic || "/avatar.png"}
-                alt="Profile"
-                className="size-32 rounded-full object-cover border-4"
+                src={backgroundImage || authUser.backgroundPic || "/avatar.png"}
+                 alt="Background"
+                className="w-full max-h-40"
               />
               <label
-                htmlFor="avatar-upload"
-                className={`
-                  absolute bottom-0 right-0
-                  bg-base-content hover:scale-105
-                  p-2 rounded-full cursor-pointer
-                  transition-all duration-200
-                  ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
-                `}
-              >
-                <Camera className="w-5 h-5 text-base-200" />
-                <input
-                  type="file"
-                  id="avatar-upload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isUpdatingProfile}
-                />
-              </label>
+                  htmlFor="avatar-upload"
+                  className={`
+                    absolute bottom-0 right-0
+                    bg-base-content hover:scale-105
+                    p-2 rounded-full cursor-pointer
+                    transition-all duration-200
+                    ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
+                  `}
+                >
+                  <Camera className="w-5 h-5 text-base-200" />
+                  <input
+                    type="file"
+                    id="avatar-upload"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleBackgroundImageUpload}
+                    disabled={isUpdatingProfile}
+                  />
+                </label>
             </div>
+
             <p className="text-sm text-zinc-400">
               {isUpdatingProfile ? "Updating..." : "Click the camera icon to update your photo"}
             </p>
@@ -91,7 +147,6 @@ const ProfilePage = () => {
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
                 <span>Member Since</span>
-                {console.log(authUser)}
                 <span>{authUser.createdAt?.split("T")[0].split("-").reverse().join("-")}</span>
               </div>
               <div className="flex items-center justify-between py-2">
@@ -100,6 +155,18 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
+          {
+            newInformationProvided &&
+            <div className="mt-6 flex justify-end">
+              <button
+                className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer"
+                onClick={handleSaveChanges}
+                disabled={isUpdatingProfile}
+              >
+                Save Changes
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>
