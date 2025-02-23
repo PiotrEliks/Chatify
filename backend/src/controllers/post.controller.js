@@ -30,11 +30,11 @@ export const createPost = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const posts = await Post.find(userId);
+    const posts = await Post.find({ userId });
 
     return res.status(200).json(posts);
   } catch (error) {
-    console.log("Error in getPosts: ", error.message);
+    console.log("Error in getUserPosts: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
