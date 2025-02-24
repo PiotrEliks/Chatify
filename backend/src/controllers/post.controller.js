@@ -65,12 +65,30 @@ export const addReactionToPost = async (req, res) => {
     post.reactions.push({ userId: userId, type: reactionType });
     await post.save();
 
-    return res.status(200).json({ message: "Reaction has been added" });
+    return res.status(200).json(post);
   } catch (error) {
-    console.log("Error in likePost: ", error.message);
+    console.log("Error in addReactionToPost: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const deleteReactionFromPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = req.body;
+
+    const post = await Post.findByIdAndUpdate(postId, { $pull: { reactions: { userId } } }, { new: true });
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    return res.status(200).json(post);
+  } catch (error) {
+    console.log("Error in deleteReactionToPost: ", error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 
 export const addCommentToPost = async (req, res) => {
   try {
@@ -85,7 +103,7 @@ export const addCommentToPost = async (req, res) => {
     post.comments.push({ userId: userId, text: text });
     await post.save();
 
-    return res.status(200).json({ message: "Comment has been added" });
+    return res.status(200).json(post);
   } catch (error) {
     console.log("Error in commentPost: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -124,6 +142,18 @@ export const getFriendsPosts = async (req, res) => {
     }
 
     return res.status(200).json(posts);
+  } catch (error) {
+    console.log("Error in getFriendsPost: ", error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(postId);
+
+    return res.status(200).json(post)
   } catch (error) {
     console.log("Error in getPost: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
