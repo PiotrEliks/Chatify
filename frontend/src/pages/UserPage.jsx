@@ -50,6 +50,7 @@ const UserPage = () => {
 
   const [comment, setComment] = useState('');
   const [selectedPost, setSelectedPost] = useState(null);
+  const socket = useAuthStore((state) => state.socket);
 
   const handleAddfriend = (userToAddId, userId) => {
     sendFriendRequest(userToAddId, userId);
@@ -76,9 +77,42 @@ const UserPage = () => {
     getProfile(params.id);
   }, [getProfile, params, isFriendBeingAdded, isFriendBeingDeleted]);
 
+  //useEffect(() => {
+  //  getFriendRequestStatus(params.id, authUser._id);
+  //}, [getFriendRequestStatus]);
+
+  console.log(friendRequest)
+
   useEffect(() => {
-    getFriendRequestStatus(params.id, authUser._id);
-  }, [friendRequest]);
+    if (!socket) return;
+
+    const fetchFriendRequestStatus = async () => {
+      try {
+        await getFriendRequestStatus(params.id, authUser._id);
+
+
+      } catch (err) {
+        console.error("Error fetching last friend reqest:", err);
+      }
+    };
+
+    const handleNewRequest = (data) => {
+      fetchFriendRequestStatus();
+      getProfile(params.id);
+    };
+
+    socket.on("friend-request-sent", handleNewRequest);
+    socket.on("friend-request-accepted", handleNewRequest);
+    socket.on("friend-request-rejeted", handleNewRequest);
+
+    fetchFriendRequestStatus();
+
+    return () => {
+      socket.off("friend-request-sent", handleNewRequest);
+      socket.off("friend-request-accepted", handleNewRequest);
+      socket.off("friend-request-rejeted", handleNewRequest);
+    };
+  }, [authUser._id, params.id, getFriendRequestStatus, socket]);
 
   useEffect(() => {
     getUserPosts(params.id);
@@ -115,12 +149,20 @@ const UserPage = () => {
             </div>
             <div className="flex flex-row gap-2">
               {userProfile.friends.includes(authUser._id) && !friendRequest && (
-                <button
-                  className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
-                  onClick={() => handleDeletefriend(userProfile._id, authUser._id)}
-                >
-                  <UserCheck /> Friends
-                </button>
+                <>
+                  <button
+                    className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
+                    onClick={() => handleDeletefriend(userProfile._id, authUser._id)}
+                  >
+                    <UserCheck /> Friends
+                  </button>
+                  <button
+                    className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl"
+                    onClick={() => handleOpenChat(userProfile)}
+                  >
+                    <MessageCircleMore />
+                  </button>
+                </>
               )}
               {!userProfile.friends.includes(authUser._id) && friendRequest?.status !== "pending" && (
                 <button
@@ -151,12 +193,6 @@ const UserPage = () => {
                   <MailQuestion /> Invitation sent
                 </div>
               )}
-              <button
-                className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl"
-                onClick={() => handleOpenChat(userProfile)}
-              >
-                <MessageCircleMore />
-              </button>
             </div>
           </div>
         </div>

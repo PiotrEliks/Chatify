@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import FriendRequest from "../models/friendRequest.model.js";
 import cloudinary from "../lib/cloudinary.js";
-import { getReceiverSocketId, io } from "../lib/socket.js";
+import { getReceiverSocketId, getSenderSocketId, io } from "../lib/socket.js";
 
 export const addFriend = async (req, res) => {
   try {
@@ -63,7 +63,17 @@ export const sendRequest = async (req, res) => {
 
     await friendRequest.save();
 
-    io.to(toUserId).emit("friend-request-sent", friendRequest);
+    const receiverSocketId = getReceiverSocketId(friendRequest.to);
+    const senderSocketId = getSenderSocketId(friendRequest.from);
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("friend-request-sent", friendRequest);
+      console.log(friendRequest)
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("friend-request-sent", friendRequest);
+      console.log(friendRequest)
+    }
 
     res.status(200).json({ message: "Request sent" });
   } catch (error) {
@@ -100,12 +110,22 @@ export const acceptRequest = async (req, res) => {
     await userFrom.save();
     await userTo.save();
 
-    io.to(friendRequest.from.toString()).emit("friend-request-accepted", friendRequest);
-    io.to(friendRequest.to.toString()).emit("friend-request-accepted", friendRequest);
+    const receiverSocketId = getReceiverSocketId(userTo._id);
+    const senderSocketId = getSenderSocketId(userFrom._id);
 
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("friend-request-accepted", friendRequest);
+      console.log(friendRequest)
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("friend-request-accepted", friendRequest);
+      console.log(friendRequest)
+    }
+
+    const responseData = { ...friendRequest._doc };
     await FriendRequest.findByIdAndDelete(requestId);
 
-    return res.status(200).json({ message: "Request accepted" });
+    return res.status(200).json(responseData);
   } catch (error) {
     console.error('Error in acceptRequest: ', error);
     return res.status(500).json({ message: 'Internal Server Error' });
@@ -128,12 +148,22 @@ export const rejectRequest = async (req, res) => {
     friendRequest.updatedAt = Date.now();
     await friendRequest.save();
 
-    io.to(friendRequest.from.toString()).emit("friend-request-rejected", friendRequest);
-    io.to(friendRequest.to.toString()).emit("friend-request-rejected", friendRequest);
+    const receiverSocketId = getReceiverSocketId(friendRequest.to);
+    const senderSocketId = getSenderSocketId(friendRequest.from);
 
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("friend-request-rejected", friendRequest);
+      console.log(friendRequest)
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("friend-request-rejected", friendRequest);
+      console.log(friendRequest)
+    }
+
+    const responseData = { ...friendRequest._doc };
     await FriendRequest.findByIdAndDelete(requestId);
 
-    return res.status(200).json({ message: "Request rejected" });
+    return res.status(200).json(responseData);
   } catch (error) {
     console.error('Error in rejectRequest: ', error);
     return res.status(500).json({ message: 'Internal Server Error' });

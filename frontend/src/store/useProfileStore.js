@@ -47,6 +47,8 @@ export const useProfileStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post(`/user/friend-request/${friendRequestId}/accept`);
       toast.success("Invitation accepted");
+      set({ friendRequest: res.data.friendRequest });
+      console.log(res.data.friendRequest)
     } catch (error) {
       console.log("Error in acceptFriendRequest", error);
     } finally {
@@ -59,6 +61,8 @@ export const useProfileStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post(`/user/friend-request/${friendRequestId}/reject`);
       toast.success("Invitation rejected");
+      set({ friendRequest: res.data.friendRequest });
+      console.log(res.data.friendRequest)
     } catch (error) {
       console.log("Error in rejectFriendRequest", error);
     } finally {
