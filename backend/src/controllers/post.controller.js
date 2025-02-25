@@ -30,7 +30,16 @@ export const createPost = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const posts = await Post.find({ userId });
+    const posts = await Post.find({ userId }).populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    }).populate('userId', 'fullName profilePic').populate({
+      path: 'reactions',
+      populate: { path: 'userId', select: 'fullName'}
+    });
+    if (!posts) {
+      return res.status(404).json({ message: 'Posts not found' });
+    }
 
     return res.status(200).json(posts);
   } catch (error) {
@@ -43,7 +52,10 @@ export const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    await Post.findByIdAndDelete(postId);
+    const post = await Post.findByIdAndDelete(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
 
     return res.status(200).json({ message: "Post has been deleted successfully" });
   } catch (error) {
@@ -57,7 +69,13 @@ export const addReactionToPost = async (req, res) => {
     const { postId } = req.params;
     const { userId, reactionType } = req.body;
 
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate({
+      path: 'reactions',
+      populate: { path: 'userId', select: 'fullName'}
+    }).populate('userId', 'fullName profilePic').populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    });
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
@@ -65,7 +83,15 @@ export const addReactionToPost = async (req, res) => {
     post.reactions.push({ userId: userId, type: reactionType });
     await post.save();
 
-    return res.status(200).json(post);
+    const updatedPost = await Post.findById(postId).populate({
+      path: 'reactions',
+      populate: { path: 'userId', select: 'fullName'}
+    }).populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    }).populate('userId', 'fullName profilePic');
+
+    return res.status(200).json(updatedPost);
   } catch (error) {
     console.log("Error in addReactionToPost: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -77,12 +103,26 @@ export const deleteReactionFromPost = async (req, res) => {
     const { postId } = req.params;
     const { userId } = req.body;
 
-    const post = await Post.findByIdAndUpdate(postId, { $pull: { reactions: { userId } } }, { new: true });
+    const post = await Post.findByIdAndUpdate(postId, { $pull: { reactions: { userId } } }, { new: true }).populate({
+      path: 'reactions',
+      populate: { path: 'userId', select: 'fullName'}
+    }).populate('userId', 'fullName profilePic').populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    });
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    return res.status(200).json(post);
+    const updatedPost = await Post.findById(postId).populate({
+      path: 'reactions',
+      populate: { path: 'userId', select: 'fullName'}
+    }).populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    }).populate('userId', 'fullName profilePic');
+
+    return res.status(200).json(updatedPost);
   } catch (error) {
     console.log("Error in deleteReactionToPost: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -95,7 +135,10 @@ export const addCommentToPost = async (req, res) => {
     const { postId } = req.params;
     const { text, userId } = req.body;
 
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    }).populate('userId', 'fullName profilePic');
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
@@ -103,7 +146,12 @@ export const addCommentToPost = async (req, res) => {
     post.comments.push({ userId: userId, text: text });
     await post.save();
 
-    return res.status(200).json(post);
+    const updatedPost = await Post.findById(postId).populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    }).populate('userId', 'fullName profilePic');
+
+    return res.status(200).json(updatedPost);
   } catch (error) {
     console.log("Error in commentPost: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -112,7 +160,10 @@ export const addCommentToPost = async (req, res) => {
 
 export const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    }).populate('userId', 'fullName profilePic');;
     if (!posts) {
       return res.status(404).json({ message: 'Post not found' });
     }
@@ -135,7 +186,10 @@ export const getFriendsPosts = async (req, res) => {
 
     const friendIds = user.friends;
     const posts = await Post.find({ userId: { $in: friendIds } })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 }).populate({
+        path: 'comments',
+        populate: { path: 'userId', select: 'fullName profilePic'}
+      }).populate('userId', 'fullName profilePic');;
 
     if (!posts) {
       return res.status(404).json({ message: 'Posts not found' });
@@ -151,7 +205,13 @@ export const getFriendsPosts = async (req, res) => {
 export const getPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate({
+      path: 'comments',
+      populate: { path: 'userId', select: 'fullName'}
+    }).populate('userId', 'fullName profilePic').populate({
+      path: 'reactions',
+      populate: { path: 'userId', select: 'fullName profilePic'}
+    });
 
     return res.status(200).json(post)
   } catch (error) {

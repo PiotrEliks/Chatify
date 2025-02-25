@@ -2,11 +2,14 @@ import React, { useEffect, useState, useRef } from 'react'
 import { format, isToday, isThisYear } from 'date-fns';
 import CommentsList from '../components/CommentsList.jsx';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
-import { ThumbsUp, MessageSquare, Forward, SendHorizontal } from 'lucide-react';
+import { ThumbsUp, MessageSquare, Forward, SendHorizontal, Smile } from 'lucide-react';
 import ReactionButton from '../components/ReactionButton.jsx';
 import { useAuthStore } from '../store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import Picker from "emoji-picker-react";
 
 const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
+  const navigate = useNavigate();
   const inputElement = useRef();
   const focusInput = () => {
     inputElement.current.focus();
@@ -22,16 +25,41 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
     };
 
   const [comment, setComment] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
+
+  const onEmojiClick = (emojiObject) => {
+    const emoji = emojiObject.emoji;
+    const input = inputElement.current;
+
+    if (!input) return;
+
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
+    const updatedComment =
+      comment.slice(0, start) +
+      emoji +
+      comment.slice(end);
+
+    setComment(updatedComment);
+    setTimeout(() => {
+      input.setSelectionRange(start + emoji.length, start + emoji.length);
+      input.focus();
+    }, 0);
+
+    setShowPicker(false);
+  };
+
   return (
     <div className="w-1/2 bg-base-100 p-5">
       <div className="flex flex-row items-center gap-3">
         <img
-          src={userProfile.profilePic || "/avatar.png"}
-          alt={userProfile.name}
+          src={post.userId.profilePic || "/avatar.png"}
+          alt={post.userId.fullName}
           className="w-12 h-12 object-cover rounded-full border-4 border-white shadow-lg"
         />
         <div className="flex flex-col">
-          <span className="text-sm cursor-pointer" onClick={() => navigate(`/user/${userProfile._id}`)}>{userProfile.fullName}</span>
+          <span className="text-sm cursor-pointer" onClick={() => navigate(`/user/${post.userId}`)}>{post.userId.fullName}</span>
           <span className="text-xs text-zinc-400">{formatDate(post.createdAt)}</span>
         </div>
       </div>
@@ -40,7 +68,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
         {post.image && (
           <img
             src={post.image}
-            alt={userProfile.name}
+            alt={post.userId.fullName}
             className="w-3/4"
           />
         )}
@@ -72,6 +100,12 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
           onChange={(e) => setComment(e.target.value)}
           ref={inputElement}
         />
+        <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
+          <Smile
+            className="w-5 h-5"
+            onClick={() => setShowPicker((val) => !val)}
+          />
+        </div>
         <button
           className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
           disabled={!comment}
@@ -79,9 +113,15 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
             addCommentToPost(post._id, comment, authUser._id);
             setComment('');
           }}
+          title="Post comment"
         >
           <SendHorizontal className={`w-5 h-5 ${!comment ? 'text-zinc-600' : 'text-accent'}`} />
         </button>
+        {showPicker && (
+          <div className="absolute z-2 bottom-0 right-0 scale-80">
+            <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
+          </div>
+        )}
       </div>
     </div>
   )

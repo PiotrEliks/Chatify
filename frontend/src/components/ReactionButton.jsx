@@ -7,7 +7,7 @@ const ReactionButton = ({ post, authUser }) => {
   const [showReactionsList, setShowReactionsList] = useState(false);
 
   const userReaction = post.reactions?.find(
-    reaction => reaction.userId.toString() === authUser._id.toString()
+    reaction => reaction.userId._id === authUser._id
   );
 
   const handleRemoveReaction = () => {

@@ -16,7 +16,7 @@ const CommentsList = ({ comments, setSelectedPost, post }) => {
   };
 
   return (
-    <div>
+    <div className="mb-3">
       {sortedComments.length > 2 && (
         <button
           className="text-accent text-xs cursor-pointer"
@@ -26,9 +26,17 @@ const CommentsList = ({ comments, setSelectedPost, post }) => {
         </button>
       )}
       {commentsToShow.map((comment) => (
-        <div key={comment._id} className="bg-base-300 rounded-2xl flex flex-col p-3 mb-2">
-          <span className="text-sm">{comment.text}</span>
-          <span className="text-xs">{formatDate(comment.createdAt)}</span>
+        <div key={comment._id} className="flex flex-row gap-3 p-1 items-center">
+          <img
+            src={comment.userId.profilePic || "/avatar.png"}
+            alt={comment.userId.fullName}
+            className="w-8 h-8 object-cover rounded-full border-1 border-white shadow-lg"
+          />
+          <div className="flex flex-col gap-1 bg-base-300 rounded-2xl p-2 max-w-full overflow-auto">
+            <span className="text-sm font-bold">{comment.userId.fullName}</span>
+            <span className="text-sm break-words">{comment.text}</span>
+            <span className="text-[0.7rem]">{formatDate(comment.createdAt)}</span>
+          </div>
         </div>
       ))}
     </div>

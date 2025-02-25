@@ -52,9 +52,9 @@ const PostReactionSummary = ({ post }) => {
         </span>
         {
           showUsersWhoReacted &&
-          <div className="bg-base-300/80 p-2 rounded-xl absolute top-10 min-w-46 z-1">
+          <div className="bg-base-300/80 p-2 rounded-xl absolute top-10 max-w-46 z-1 flex flex-col">
             {post.reactions.map((reaction) => (
-              <span key={reaction._id} className="text-xs text-zinc-400">{emojiFor(reaction.type)} {reaction.userId}</span>
+              <span key={reaction._id} className="text-xs text-zinc-400">{emojiFor(reaction.type)} {reaction.userId.fullName}</span>
             ))}
           </div>
         }
@@ -64,17 +64,17 @@ const PostReactionSummary = ({ post }) => {
         onMouseOver={() => setShowUsersWhoCommented(true)}
         onMouseOut={() => setShowUsersWhoCommented(false)}
       >
-        <span>{post.comments.length} comments</span>
+        <span className="text-xs text-zinc-400">{post.comments.length} comments</span>
         {
           showUsersWhoCommented &&
           <div className="bg-base-300/80 p-2 rounded-xl absolute top-10 right-0 min-w-46 z-1 flex flex-col">
             {post.comments
               .filter((comment, index, self) =>
-                index === self.findIndex(c => c.userId === comment.userId)
+                index === self.findIndex(c => c.userId._id === comment.userId._id)
               )
               .map((comment) => (
                 <span key={comment._id} className="text-xs text-zinc-400">
-                  {comment.userId}
+                  {comment.userId.fullName}
                 </span>
               ))
             }

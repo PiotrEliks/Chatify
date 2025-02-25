@@ -51,9 +51,6 @@ const UserPage = () => {
   const [comment, setComment] = useState('');
   const [selectedPost, setSelectedPost] = useState(null);
 
-  console.log(posts)
-
-
   const handleAddfriend = (userToAddId, userId) => {
     sendFriendRequest(userToAddId, userId);
   };
