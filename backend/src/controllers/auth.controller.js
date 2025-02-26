@@ -122,7 +122,7 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilePic, backgroundPic } = req.body;
+    const { profilePic, backgroundPic, biogram, relationshipStatus, education, city, work } = req.body;
     const userId = req.user._id;
 
     const updateData = {};
@@ -135,6 +135,28 @@ export const updateProfile = async (req, res) => {
       const uploadResponse = await cloudinary.uploader.upload(backgroundPic);
       updateData.backgroundPic = uploadResponse.secure_url;
     }
+
+    if (biogram) {
+      updateData.biogram = biogram;
+    }
+
+    if (relationshipStatus) {
+      updateData.relationshipStatus = relationshipStatus;
+    }
+
+    if (education) {
+      updateData.education = education;
+    }
+
+    if (city) {
+      updateData.city = city;
+    }
+
+    if (work) {
+      updateData.work = work;
+    }
+
+    console.log(updateData)
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: "No update data provided" });

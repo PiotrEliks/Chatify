@@ -40,7 +40,28 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
       }
-    ]
+    ],
+    biogram: {
+      type: String,
+      default: "",
+    },
+    relationshipStatus: {
+      type: String,
+      default: "",
+      enum: ['','single', 'married', 'engaged', 'divorced', 'complicated'],
+    },
+    education: {
+      type: String,
+      default: "",
+    },
+    city: {
+      type: String,
+      default: "",
+    },
+    work: {
+      type: String,
+      default: "",
+    }
   },
   { timestamps: true }
 );

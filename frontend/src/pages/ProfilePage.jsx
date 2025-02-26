@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
-import { Camera, Mail, User} from 'lucide-react'
+import { Camera, Mail, User, BriefcaseBusiness, Heart, House, GraduationCap, PencilLine  } from 'lucide-react'
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [profileImage, setProfileImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
+  const [relationshipStatus, setRelationshipStatus] = useState(null);
+  const [biogram, setBiogram] = useState(null);
+  const [education, setEducation] = useState(null);
+  const [city, setCity] = useState(null);
+  const [work, setWork] = useState(null);
   const [newInformationProvided, setNewInformationProvided] = useState(false);
   const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -41,12 +46,19 @@ const ProfilePage = () => {
     const updateData = {};
     if (profileImage) updateData.profilePic = profileImage;
     if (backgroundImage) updateData.backgroundPic = backgroundImage;
+    if (biogram) updateData.biogram = biogram;
+    if (relationshipStatus) updateData.relationshipStatus = relationshipStatus;
+    if (education) updateData.education = education;
+    if (city) updateData.city = city;
+    if (work) updateData.work = work;
 
     if (Object.keys(updateData).length === 0) return;
 
     await updateProfile(updateData);
     setNewInformationProvided(false);
   };
+
+  console.log(authUser)
 
   return (
     <div className="h-screen pt-20">
@@ -91,6 +103,7 @@ const ProfilePage = () => {
                   </label>
                 </div>
               </div>
+              <p className="text-xs mb-4">Click the camera icon to update your profile picture</p>
               <div className="relative">
                 <div className="w-full">
                   <img
@@ -120,6 +133,7 @@ const ProfilePage = () => {
                     </label>
                 </div>
               </div>
+              <p className="text-xs mt-4">Click the camera icon to update your background picture</p>
             </div>
           </div>
           <div className="space-y-6">
@@ -140,6 +154,81 @@ const ProfilePage = () => {
               <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
                 {authUser?.email}
               </p>
+            </div>
+            <div className="space-y-1.5">
+              <div className="text-sm text-zinc-400 flex items-center gap-2">
+                <PencilLine  className="w-4 h-4" />
+                Biogram
+              </div>
+              <input
+                type="text"
+                className="px-4 py-2.5 bg-base-200 rounded-lg border w-full"
+                placeholder="Write something about yourself..."
+                value={authUser.biogram || biogram}
+                onChange={(e) =>{ setBiogram(e.target.value);setNewInformationProvided(true)}}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <div className="text-sm text-zinc-400 flex items-center gap-2">
+                <Heart className="w-4 h-4" />
+                Relationship
+              </div>
+              <select
+                className="px-4 py-2.5 bg-base-200 rounded-lg border w-full"
+                value={relationshipStatus ?? authUser.relationshipStatus ?? ""}
+                onChange={(e) => {
+                  setRelationshipStatus(e.target.value);
+                  setNewInformationProvided(true);
+                }}
+              >
+                <option value="" disabled>
+                  {authUser.relationshipStatus ? authUser.relationshipStatus : "What's your relationship status?"}
+                </option>
+                <option value="single">Single</option>
+                <option value="married">Married</option>
+                <option value="engaged">Engaged</option>
+                <option value="divorced">Divorced</option>
+                <option value="complicated">It's complicated</option>
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <div className="text-sm text-zinc-400 flex items-center gap-2">
+                <GraduationCap className="w-4 h-4" />
+                Education
+              </div>
+              <input
+                type="text"
+                className="px-4 py-2.5 bg-base-200 rounded-lg border w-full"
+                placeholder="Add school..."
+                value={authUser.education || education}
+                onChange={(e) => {setEducation(e.target.value);setNewInformationProvided(true)}}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <div className="text-sm text-zinc-400 flex items-center gap-2">
+                <House className="w-4 h-4" />
+                City
+              </div>
+              <input
+                type="text"
+                className="px-4 py-2.5 bg-base-200 rounded-lg border w-full"
+                placeholder="Where do you live?"
+                value={authUser.city || city}
+                onChange={(e) => {setCity(e.target.value);setNewInformationProvided(true)}}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <div className="text-sm text-zinc-400 flex items-center gap-2">
+                <BriefcaseBusiness className="w-4 h-4" />
+                Work
+              </div>
+              <input
+                type="text"
+                className="px-4 py-2.5 bg-base-200 rounded-lg border w-full"
+                placeholder="Where do you work?"
+                value={authUser.work || work}
+                onChange={(e) => {setWork(e.target.value);setNewInformationProvided(true)}}
+              />
             </div>
           </div>
           <div className="mt-6 bg-base-300 rounded-xl p-6">
