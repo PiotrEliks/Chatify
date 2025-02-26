@@ -39,24 +39,24 @@ const ReactionButton = ({ post, authUser }) => {
   ];
 
   return (
-    <div className="relative h-full w-1/3 flex items-center justify-center rounded-ms hover:bg-zinc-800">
+    <div className="relative h-full  flex items-center justify-center rounded-ms hover:bg-zinc-800">
       <button
         className={`flex flex-row items-center justify-center p-3 w-full gap-2 cursor-pointer ${
-          userReaction ? "text-accent font-bold" : ""
+          userReaction ? "text-accent" : ""
         }`}
         onClick={handleMainButtonClick}
         onMouseEnter={() => setShowReactionsList(true)}
       >
-        {userReaction?.type === 'like' && <><ThumbsUp className="w-5 h-5" /> Like it!</>}
-        {userReaction?.type === 'heart' && <>❤️ Love it!</>}
-        {userReaction?.type === 'haha' && <>🤣 Haha</>}
-        {userReaction?.type === 'sad' && <>😭 Sorry</>}
-        {!userReaction && <><ThumbsUp className="w-5 h-5" /> Like it!</>}
+        {userReaction?.type === 'like' && <><ThumbsUp className="size-4 sm:size-5" /> <span className="text-sm">Like it!</span></>}
+        {userReaction?.type === 'heart' && <><Heart className="size-4 sm:size-5" /> <span className="text-sm">Love it!</span></>}
+        {userReaction?.type === 'haha' && <><Laugh className="size-4 sm:size-5" /> <span className="text-sm">Haha</span></>}
+        {userReaction?.type === 'sad' && <><Frown className="size-4 sm:size-5" /> <span className="text-sm">Sorry</span></>}
+        {!userReaction && <><ThumbsUp className="size-4 sm:size-5" /> <span className="text-sm">Like it!</span></>}
       </button>
 
       {showReactionsList && !userReaction && (
         <div
-          className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 flex flex-row gap-2 p-2 bg-base-200 shadow-lg rounded-3xl"
+          className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/3 flex flex-row gap-2 p-2 bg-base-200 shadow-lg rounded-3xl sm:-translate-x-1/2"
           onMouseLeave={() => setShowReactionsList(false)}
         >
           {reactions.map((r) => (

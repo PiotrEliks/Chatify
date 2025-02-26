@@ -31,7 +31,7 @@ const App = () => {
     if (!socket) return;
 
     const handleNewMessage = (newMessage) => {
-      if (!selectedUser || newMessage.senderId !== selectedUser._id) {
+      if (!selectedUser || newMessage.senderId !== selectedUser._id || newMessage.senderId !== authUser._id) {
         if (soundNotification) {
           notification.play();
         }
@@ -40,10 +40,10 @@ const App = () => {
       }
     };
 
-    socket.on("newMessage", handleNewMessage);
+    socket.on("newMessageReceived", handleNewMessage);
 
     return () => {
-      socket.off("newMessage", handleNewMessage);
+      socket.off("newMessageReceived", handleNewMessage);
     };
   }, [selectedUser, socket, setMessages, soundNotification]);
 

@@ -38,8 +38,8 @@ const SignUpPage = () => {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
-              <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <MessageSquare className="size-6 text-primary" />
+              <div className="size-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                <MessageSquare className="size-6 text-accent" />
               </div>
               <h1 className="text-2xl font-bold mt-2">
                 Create Account
@@ -120,7 +120,7 @@ const SignUpPage = () => {
             </div>
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="btn btn-accent w-full"
               disabled={isSginingUp}
             >
               {isSginingUp ? (
@@ -136,7 +136,7 @@ const SignUpPage = () => {
           <div className="text-center">
             <p className="text-base-contene/60">
               Already have an account?{" "}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className="link link-accent">
                 Sign In
               </Link>
             </p>
@@ -144,7 +144,7 @@ const SignUpPage = () => {
         </div>
       </div>
       <AuthImagePattern
-        title="Join out community"
+        title="Join our community"
         subtitle="Connect with your firends, share moments, and stay in touch with your loved ones."
       />
     </div>

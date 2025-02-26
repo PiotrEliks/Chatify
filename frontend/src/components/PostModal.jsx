@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePostsStore } from '../store/usePostStore';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
 import Picker from "emoji-picker-react";
+import {isMobile} from 'react-device-detect';
 
 const PostModal = ({
   post2,
@@ -76,15 +77,15 @@ const onEmojiClick = (emojiObject) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-      <div ref={modalRef} className="bg-base-100 w-11/12 max-w-2xl h-[90vh] flex flex-col rounded-lg relative p-2">
+      <div ref={modalRef} className="bg-base-100 w-full max-w-2xl h-[100vh] flex flex-col relative sm:w-11/12 sm:p-2 sm:h-[90vh] sm:rounded-lg ">
         <button
           onClick={onClose}
-          className="absolute top-2 right-5 text-xl font-bold text-white cursor-pointer"
+          className="absolute top-1 right-1 text-xl font-bold text-white cursor-pointer sm:top-2 sm:right-5"
         >
           <X />
         </button>
 
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-3 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <img
               src={userProfile.profilePic || "/avatar.png"}
@@ -112,13 +113,13 @@ const onEmojiClick = (emojiObject) => {
             <div className="w-full flex flex-row items-center justify-evenly mb-2 border-y border-accent">
               <ReactionButton post={post} authUser={authUser} />
               <button
-                className="h-full w-1/3 flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer"
+                className="h-full flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer"
                 onClick={focusInput}
               >
-                <MessageSquare className="w-5 h-5" /> Comment
+                <MessageSquare className="size-4 sm:size-5" /> <span className="text-sm">Comment</span>
               </button>
-              <button className="h-full w-1/3 flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer">
-                <Forward className="w-5 h-5" /> Share
+              <button className="h-full flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer">
+                <Forward className="size-4 sm:size-5" /> <span className="text-sm">Share</span>
               </button>
             </div>
           </div>
@@ -128,7 +129,6 @@ const onEmojiClick = (emojiObject) => {
             {post.comments && post.comments.length > 0 ? (
               [...post.comments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((comment) => (
                 <div key={comment._id} className="flex flex-row gap-3 p-1 items-center">
-                  {console.log(comment)}
                   <img
                     src={comment.userId.profilePic || "/avatar.png"}
                     alt={comment.userId.fullName}
@@ -157,12 +157,15 @@ const onEmojiClick = (emojiObject) => {
               className="flex-1 input input-bordered pr-10"
               ref={inputElement}
             />
-            <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
-              <Smile
-                className="w-5 h-5"
-                onClick={() => setShowPicker((val) => !val)}
-              />
-            </div>
+            {
+              !isMobile &&
+                <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
+                  <Smile
+                    className="w-5 h-5"
+                    onClick={() => setShowPicker((val) => !val)}
+                  />
+                </div>
+            }
             <button
               onClick={() => {
                 addComment(post._id, comment, authUser._id);

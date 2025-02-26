@@ -26,8 +26,8 @@ const LoginPage = () => {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
-              <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <MessageSquare className="size-6 text-primary" />
+              <div className="size-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                <MessageSquare className="size-6 text-accent" />
               </div>
               <h1 className="text-2xl font-bold mt-2">
                 Welcome Back
@@ -89,7 +89,7 @@ const LoginPage = () => {
             </div>
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="btn btn-accent w-full"
               disabled={isLoggingIn}
             >
               {isLoggingIn ? (
@@ -105,7 +105,7 @@ const LoginPage = () => {
           <div className="text-center">
             <p className="text-base-contene/60">
               Don&apos;t have an account?{" "}
-              <Link to="/signup" className="link link-primary">
+              <Link to="/signup" className="link link-accent">
                 Creat account
               </Link>
             </p>
@@ -113,7 +113,7 @@ const LoginPage = () => {
         </div>
       </div>
       <AuthImagePattern
-        title="Join out community"
+        title="Join our community"
         subtitle="Connect with your firends, share moments, and stay in touch with your loved ones."
       />
     </div>

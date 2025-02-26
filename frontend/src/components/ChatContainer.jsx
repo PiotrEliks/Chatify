@@ -5,8 +5,6 @@ import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton.jsx";
 import ChatContainerMessageItem from "./ChatContainerMessageItem.jsx";
 import { useAuthStore } from "../store/useAuthStore";
-import { formatMessageTime } from "../lib/utils";
-import { format, isToday } from 'date-fns';
 
 const ChatContainer = () => {
   const {
@@ -19,7 +17,6 @@ const ChatContainer = () => {
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
-  const [showMessageDetails, setShowMessageDetails] = useState({});
 
   useEffect(() => {
     getMessages(selectedUser._id);
@@ -44,13 +41,6 @@ const ChatContainer = () => {
       </div>
     );
   }
-
-  const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return isToday(date) ? format(date, 'HH:mm') : format(date, 'dd-MM-yy');
-    };
-
-  console.log(showMessageDetails)
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">

@@ -26,16 +26,16 @@ const CommentsList = ({ comments, setSelectedPost, post }) => {
         </button>
       )}
       {commentsToShow.map((comment) => (
-        <div key={comment._id} className="flex flex-row gap-3 p-1 items-center">
+        <div key={comment._id} className="flex flex-row gap-2 mb-1 items-center sm:gap-3 sm:p-1 sm:mb-0">
           <img
             src={comment.userId.profilePic || "/avatar.png"}
             alt={comment.userId.fullName}
-            className="w-8 h-8 object-cover rounded-full border-1 border-white shadow-lg"
+            className="size-6 object-cover rounded-full border-1 border-white shadow-lg sm:size-8"
           />
           <div className="flex flex-col gap-1 bg-base-300 rounded-2xl p-2 max-w-full overflow-auto">
-            <span className="text-sm font-bold">{comment.userId.fullName}</span>
-            <span className="text-sm break-words">{comment.text}</span>
-            <span className="text-[0.7rem]">{formatDate(comment.createdAt)}</span>
+            <span className="text-xs font-bold sm:text-sm">{comment.userId.fullName}</span>
+            <span className="text-xs break-words sm:text-sm">{comment.text}</span>
+            <span className="text-[0.6rem] sm:text=[0.7rem]">{formatDate(comment.createdAt)}</span>
           </div>
         </div>
       ))}

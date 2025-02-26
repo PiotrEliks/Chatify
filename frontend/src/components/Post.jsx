@@ -7,6 +7,7 @@ import ReactionButton from '../components/ReactionButton.jsx';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import Picker from "emoji-picker-react";
+import {isMobile} from 'react-device-detect';
 
 const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
   };
 
   return (
-    <div className="w-1/2 bg-base-100 p-5">
+    <div className="lg:w-3xl w-full bg-base-100 p-5">
       <div className="flex flex-row items-center gap-3">
         <img
           src={post.userId.profilePic || "/avatar.png"}
@@ -79,19 +80,19 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
       <div className="w-full flex flex-row items-center justify-evenly mb-2 border-y border-accent">
         <ReactionButton post={post} authUser={authUser} />
         <button
-          className="h-full w-1/3 flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer"
+          className="h-full  flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer text-sm"
           onClick={focusInput}
         >
-          <MessageSquare className="w-5 h-5" /> Comment
+          <MessageSquare className="size-4 sm:size-5" /> Comment
         </button>
-        <button className="h-full w-1/3 flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer">
-          <Forward className="w-5 h-5" /> Share
+        <button className="h-full  flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer text-sm">
+          <Forward className="size-4 sm:size-5" /> Share
         </button>
       </div>
       <div className="w-full">
         <CommentsList comments={post.comments} setSelectedPost={setSelectedPost} post={post}/>
       </div>
-      <div className="relative">
+      <div className="relative w-full">
         <input
           type="text"
           className="w-full pr-10 input input-bordered"
@@ -100,12 +101,15 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
           onChange={(e) => setComment(e.target.value)}
           ref={inputElement}
         />
-        <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
-          <Smile
-            className="w-5 h-5"
-            onClick={() => setShowPicker((val) => !val)}
-          />
-        </div>
+        {
+          !isMobile &&
+            <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
+              <Smile
+                className="w-5 h-5"
+                onClick={() => setShowPicker((val) => !val)}
+              />
+            </div>
+        }
         <button
           className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
           disabled={!comment}
@@ -118,7 +122,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
           <SendHorizontal className={`w-5 h-5 ${!comment ? 'text-zinc-600' : 'text-accent'}`} />
         </button>
         {showPicker && (
-          <div className="absolute z-2 bottom-0 right-0 scale-80">
+          <div className="absolute z-2 scale-50 bottom-0 translate-y-18 right-0 translate-x-22 lg:scale-80 lg:translate-y-0 lg:translate-x-8">
             <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
           </div>
         )}

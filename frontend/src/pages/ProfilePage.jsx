@@ -61,64 +61,66 @@ const ProfilePage = () => {
             </p>
           </div>
           <div className="flex flex-col items-center gap-4">
-            <div className="relative flex flex-col items-center justify-center">
-              <div className="absolute">
-                <img
-                  src={profileImage || authUser.profilePic || "/avatar.png"}
-                  alt="Profile"
-                  className="size-32 rounded-full object-cover border-4 ring-2 ring-zinc-900"
-                />
-                <label
-                  htmlFor="avatar-upload"
-                  className={`
-                    absolute bottom-0 right-0
-                    bg-base-content hover:scale-105
-                    p-2 rounded-full cursor-pointer
-                    transition-all duration-200
-                    ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
-                  `}
-                >
-                  <Camera className="w-5 h-5 text-base-200" />
-                  <input
-                    type="file"
-                    id="avatar-upload"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleProfileImageUpload}
-                    disabled={isUpdatingProfile}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative">
+                <div className="w-full flex items-center justify-center mb-5">
+                  <img
+                    src={authUser.profilePic || "/avatar.png"}
+                    alt="Profile"
+                    className="size-32 rounded-full object-cover border-4 ring-2 ring-zinc-900"
                   />
-                </label>
+                  <label
+                    htmlFor="avatar-upload"
+                    className={`
+                      absolute bottom-5 right-0
+                      bg-base-content hover:scale-105
+                      p-2 rounded-full cursor-pointer
+                      transition-all duration-200
+                      ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
+                    `}
+                  >
+                    <Camera className="w-5 h-5 text-base-200" />
+                    <input
+                      type="file"
+                      id="avatar-upload"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleProfileImageUpload}
+                      disabled={isUpdatingProfile}
+                    />
+                  </label>
+                </div>
               </div>
-              <img
-                src={backgroundImage || authUser.backgroundPic || "/avatar.png"}
-                 alt="Background"
-                className="w-full max-h-40"
-              />
-              <label
-                  htmlFor="avatar-upload"
-                  className={`
-                    absolute bottom-0 right-0
-                    bg-base-content hover:scale-105
-                    p-2 rounded-full cursor-pointer
-                    transition-all duration-200
-                    ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
-                  `}
-                >
-                  <Camera className="w-5 h-5 text-base-200" />
-                  <input
-                    type="file"
-                    id="avatar-upload"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleBackgroundImageUpload}
-                    disabled={isUpdatingProfile}
+              <div className="relative">
+                <div className="w-full">
+                  <img
+                    src={authUser.backgroundPic || "/avatar.png"}
+                    alt="Background"
+                    className="w-full max-h-40"
                   />
-                </label>
+                  <label
+                      htmlFor="background-upload"
+                      className={`
+                        absolute bottom-0 right-0
+                        bg-base-content hover:scale-105
+                        p-2 rounded-full cursor-pointer
+                        transition-all duration-200
+                        ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
+                      `}
+                    >
+                      <Camera className="w-5 h-5 text-base-200" />
+                      <input
+                        type="file"
+                        id="background-upload"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleBackgroundImageUpload}
+                        disabled={isUpdatingProfile}
+                      />
+                    </label>
+                </div>
+              </div>
             </div>
-
-            <p className="text-sm text-zinc-400">
-              {isUpdatingProfile ? "Updating..." : "Click the camera icon to update your photo"}
-            </p>
           </div>
           <div className="space-y-6">
             <div className="space-y-1.5">

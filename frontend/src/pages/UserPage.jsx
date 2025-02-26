@@ -20,6 +20,7 @@ import PostModal from '../components/PostModal.jsx';
 import CommentsList from '../components/CommentsList.jsx';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
 import Post from '../components/Post.jsx';
+import {isMobile} from 'react-device-detect';
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -77,12 +78,6 @@ const UserPage = () => {
     getProfile(params.id);
   }, [getProfile, params, isFriendBeingAdded, isFriendBeingDeleted]);
 
-  //useEffect(() => {
-  //  getFriendRequestStatus(params.id, authUser._id);
-  //}, [getFriendRequestStatus]);
-
-  console.log(friendRequest)
-
   useEffect(() => {
     if (!socket) return;
 
@@ -125,7 +120,7 @@ const UserPage = () => {
   );
 
   return (
-    <div className="h-screen bg-base-200 p-16 mt-8">
+    <div className="h-screen bg-base-200 mt-8 sm:p-16">
       {userProfile !== null ? (
         <div className="relative w-full">
           <img
@@ -133,21 +128,22 @@ const UserPage = () => {
             alt={userProfile.name}
             className="w-full h-96 object-cover"
           />
-          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 z-10 p-2 flex flex-row bg-base-300/75 items-center w-full justify-between">
-            <div className="flex flex-row items-center gap-5">
+          <div className="bg-black w-full h-30 sm:bg-none sm:h-0"/>
+          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 z-10 p-2 flex flex-col bg-base-300/75 items-center w-full justify-between sm:flex-row">
+            <div className="flex flex-col gap-2 items-center sm:flex-row sm:gap-5">
               <img
                 src={userProfile.profilePic || "/avatar.png"}
                 alt={userProfile.name}
-                className="w-32 h-32 object-cover rounded-full border-4 border-white shadow-lg"
+                className="size-26 object-cover rounded-full border-4 border-white shadow-lg sm:size-32"
               />
-              <div className="flex flex-col">
-                <p className="text-2xl font-bold">{userProfile.fullName}</p>
-                <p className="text-xl text-gray-300">
+              <div className="flex flex-col items-center sm:items-baseline">
+                <p className="text-xl font-bold sm:text-2xl">{userProfile.fullName}</p>
+                <p className="text-md text-gray-300 sm:text-xl">
                   {userProfile.friends?.length || 0} {userProfile.friends?.length !== 1 ? "Friends" : "Friend"}
                 </p>
               </div>
             </div>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 my-2 sm:my-0">
               {userProfile.friends.includes(authUser._id) && !friendRequest && (
                 <>
                   <button
