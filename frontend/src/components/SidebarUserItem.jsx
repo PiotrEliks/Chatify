@@ -79,7 +79,7 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect, onlineUsers }) =>
             : <span className="absolute bottom-0 right-0 size-3 bg-red-600 rounded-full ring-2 ring-zinc-900"/>
         }
       </div>
-      <div className="hidden lg:block text-left min-w-0">
+      <div className="block text-left min-w-0">
         <div className="font-medium truncate">{user.fullName}</div>
         <div className={`text-sm ${lastMessage?.seen ? 'text-zinc-400' : 'text-zinc-50 bold'}`}>
           {lastMessage ?

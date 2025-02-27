@@ -46,7 +46,7 @@ const Navbar = () => {
               <input
                 type="text"
                 id="search-navbar"
-                className="block w-full p-2 ps-10 text-sm text-zinc-800 dark:text-zinc-100 border border-gray-300 rounded-lg bg-base-100"
+                className="block w-full p-2 ps-10 text-sm border rounded-lg bg-base-100"
                 placeholder="Find a user..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -58,7 +58,7 @@ const Navbar = () => {
                 }}
               />
               {searchTerm && filteredUsers.length > 0 && (
-                <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border border-gray-200 rounded max-h-64 overflow-y-auto">
+                <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border rounded max-h-64 overflow-y-auto">
                   {filteredUsers.map((user) => (
                     <button
                       key={user._id}
@@ -80,7 +80,7 @@ const Navbar = () => {
                 </div>
               )}
               {searchTerm && filteredUsers.length === 0 && (
-                <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border border-gray-200 rounded max-h-64 overflow-y-auto p-3">
+                <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border rounded max-h-64 overflow-y-auto p-3">
                   User not found
                 </div>
               )}
@@ -90,12 +90,12 @@ const Navbar = () => {
         <div className="relative flex items-center sm:order-2 space-x-3 sm:space-x-2">
           {authUser && (
             <>
-              <Link to="/chat" className="hidden sm:block p-2 text-zinc-800 dark:text-zinc-100 hover:bg-base-100 rounded-lg">
+              <Link to="/chat" className="hidden sm:block p-2 hover:bg-base-100 rounded-lg">
                 <div className="flex flex-row justify-center items-center gap-1">
                   <MessageSquare className="w-5 h-5" /> Chat
                 </div>
               </Link>
-              <Link to="/settings" className="hidden sm:block p-2 text-zinc-800 dark:text-zinc-100 hover:bg-base-100 rounded-lg">
+              <Link to="/settings" className="hidden sm:block p-2 hover:bg-base-100 rounded-lg">
                 <div className="flex flex-row justify-center items-center gap-1">
                   <Settings className="w-5 h-5" /> Settings
                 </div>
@@ -108,7 +108,7 @@ const Navbar = () => {
                 <span className="sr-only">Open user menu</span>
                 <img className="w-8 h-8 rounded-full" src={authUser.profilePic || '/avatar.png'} alt="user photo" />
               </button>
-              <button data-collapse-toggle="navbar-search" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-zinc-100 rounded-lg md:hidden hover:bg-base-100 focus:outline-none focus:ring-2 focus:ring-base-100 dark:text-zinc-100 dark:hover:bg-base-100 dark:focus:ring-base-100 cursor-pointer" aria-controls="navbar-search" aria-expanded="false" onClick={toggleMenu}>
+              <button data-collapse-toggle="navbar-search" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg sm:hidden hover:bg-base-100 focus:outline-none focus:ring-2 focus:ring-base-100ark:hover:bg-base-100 dark:focus:ring-base-100 cursor-pointer" aria-controls="navbar-search" aria-expanded="false" onClick={toggleMenu}>
                 <span className="sr-only">Open main menu</span>
                 <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
@@ -118,14 +118,14 @@ const Navbar = () => {
           )}
         </div>
         {isUserMenuOpen && (
-          <div className="absolute right-4 top-14 z-50 my-4 text-base list-none bg-base-300 divide-y border-1 border-gray-100 divide-gray-100 rounded-lg shadow-sm">
+          <div className="absolute right-4 top-14 z-50 my-4 text-base list-none bg-base-300 divide-y border-1  rounded-lg shadow-sm">
             <div className="px-4 py-3">
-              <span className="block text-sm text-zinc-800 dark:text-zinc-100">{authUser.fullName}</span>
-              <span className="block text-sm text-zinc-600 dark:text-zinc-400 truncate">{authUser.email}</span>
+              <span className="block text-sm ">{authUser.fullName}</span>
+              <span className="block text-sm  truncate">{authUser.email}</span>
             </div>
             <ul className="py-2">
               <li>
-                <Link to="/profile" className="block px-4 py-2 text-sm text-zinc-800 dark:text-zinc-100 hover:bg-base-100" onClick={() => {toggleUserMenu()}}>
+                <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-base-100" onClick={() => {toggleUserMenu()}}>
                   <div className="flex flex-row gap-1 items-center">
                     <User className="size-5" />
                     <span className="">Profile</span>
@@ -133,7 +133,7 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <button className="block px-4 py-2 text-sm text-zinc-800 dark:text-zinc-100 hover:bg-base-100 w-full cursor-pointer" onClick={() => {logout();toggleUserMenu();}}>
+                <button className="block px-4 py-2 text-sm hover:bg-base-100 w-full cursor-pointer" onClick={() => {logout();toggleUserMenu();}}>
                   <div className="flex flex-row gap-1 items-center">
                     <LogOut className="size-5" />
                     <span className="">Logout</span>
@@ -145,7 +145,7 @@ const Navbar = () => {
         )}
         {isMenuOpen && (
           <div className="w-full sm:hidden">
-            <ul className="flex flex-col font-medium p-4 mt-4 border border-gray-100 rounded-lg bg-base-300">
+            <ul className="flex flex-col font-medium p-4 mt-4 borderrounded-lg bg-base-300">
               <div className="relative w-full mb-2">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center">
                   <Search />
@@ -153,7 +153,7 @@ const Navbar = () => {
                 <input
                   type="text"
                   id="search-navbar"
-                  className="block w-full p-2 ps-10 text-sm text-zinc-800 dark:text-zinc-100 border border-gray-300 rounded-lg bg-base-100"
+                  className="block w-full p-2 ps-10 text-sm borderrounded-lg bg-base-100"
                   placeholder="Find a user..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -166,7 +166,7 @@ const Navbar = () => {
                   }}
                 />
                 {searchTerm && filteredUsers.length > 0 && (
-                  <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border border-gray-200 rounded max-h-64 overflow-y-auto">
+                  <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border rounded max-h-64 overflow-y-auto">
                     {filteredUsers.map((user) => (
                       <button
                         key={user._id}
@@ -189,16 +189,16 @@ const Navbar = () => {
                   </div>
                 )}
                 {searchTerm && filteredUsers.length === 0 && (
-                  <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border border-gray-200 rounded max-h-64 overflow-y-auto p-3">
+                  <div className="absolute z-20 left-0 right-0 top-10 bg-base-100 shadow-lg border rounded max-h-64 overflow-y-auto p-3">
                     User not found
                   </div>
                 )}
               </div>
               <li>
-                <Link to="/chat" className="block py-2 px-3 text-zinc-800 dark:text-zinc-100 hover:bg-base-100">Chat</Link>
+                <Link to="/chat" className="block py-2 px-3 hover:bg-base-100">Chat</Link>
               </li>
               <li>
-                <Link to="/settings" className="block py-2 px-3 text-zinc-800 dark:text-zinc-100 hover:bg-base-100">Settings</Link>
+                <Link to="/settings" className="block py-2 px-3 hover:bg-base-100">Settings</Link>
               </li>
             </ul>
           </div>

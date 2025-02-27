@@ -120,7 +120,7 @@ const UserPage = () => {
   );
 
   return (
-    <div className="h-screen bg-base-200 mt-8 sm:p-16">
+    <div className="bg-base-200 mt-8 sm:p-16">
       {userProfile !== null ? (
         <div className="relative w-full">
           <img
