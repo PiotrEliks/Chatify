@@ -28,9 +28,11 @@ const Navbar = () => {
     user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log(users)
+
   return (
     <nav className="bg-base-300 fixed z-100 w-full top-0">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="w-screen flex flex-wrap items-center justify-between mx-auto p-4">
         <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
           <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center">
             <MessageSquare className="w-5 h-5 text-accent" />
@@ -125,7 +127,7 @@ const Navbar = () => {
             </div>
             <ul className="py-2">
               <li>
-                <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-base-100" onClick={() => {toggleUserMenu()}}>
+                <Link to={`/user/${authUser._id}`} className="block px-4 py-2 text-sm hover:bg-base-100" onClick={() => {toggleUserMenu()}}>
                   <div className="flex flex-row gap-1 items-center">
                     <User className="size-5" />
                     <span className="">Profile</span>

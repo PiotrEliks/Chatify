@@ -3,10 +3,14 @@ import { useChatStore } from '../store/useChatStore';
 import Sidebar from '../components/Sidebar.jsx';
 import NoChatSelected from '../components/NoChatSelected.jsx';
 import ChatContainer from '../components/ChatContainer.jsx';
+import { Helmet } from 'react-helmet';
 
 const ChatPage = () => {
   const { selectedUser } = useChatStore();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    document.title = `${selectedUser ? selectedUser.fullName : 'Chat'} | Chatify`;
+  }, [selectedUser]);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -15,8 +19,6 @@ const ChatPage = () => {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  console.log(windowWidth);
 
   return (
     <div className="h-screen bg-base-200">

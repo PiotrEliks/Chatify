@@ -14,13 +14,14 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { usePostsStore } from '../store/usePostStore';
 import { format, isToday, isThisYear } from 'date-fns';
-import { ThumbsUp, MessageSquare, Forward, SendHorizontal } from 'lucide-react';
+import { ThumbsUp, MessageSquare, Forward, SendHorizontal, UserRoundPen, Image, Send } from 'lucide-react';
 import ReactionButton from '../components/ReactionButton.jsx';
 import PostModal from '../components/PostModal.jsx';
 import CommentsList from '../components/CommentsList.jsx';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
 import Post from '../components/Post.jsx';
 import {isMobile} from 'react-device-detect';
+import CreatePost from '../components/CreatePost.jsx';
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -119,6 +120,17 @@ const UserPage = () => {
     </div>
   );
 
+  const getSharedFriendsCount = (user) => {
+    if (!authUser || !authUser.friends || !user.friends) return 0;
+
+    const authUserFriendsSet = new Set(authUser.friends);
+
+    return user.friends.filter(friendId => authUserFriendsSet.has(friendId)).length;
+  };
+
+  console.log("authUser: ", authUser);
+  console.log("userProfle: ", userProfile);
+
   return (
     <div className="bg-base-200 mt-8 sm:p-16">
       {userProfile !== null ? (
@@ -141,10 +153,13 @@ const UserPage = () => {
                 <p className="text-md text-gray-300 sm:text-xl">
                   {userProfile.friends?.length || 0} {userProfile.friends?.length !== 1 ? "Friends" : "Friend"}
                 </p>
+                {userProfile._id !== authUser._id &&
+                  <p className="text-sm text-gray-400">{getSharedFriendsCount(userProfile)} Mutual {getSharedFriendsCount(userProfile) !== 1 ? 'Friends' : 'Friend'}</p>
+                }
               </div>
             </div>
             <div className="flex flex-row gap-2 my-2 sm:my-0">
-              {userProfile.friends.includes(authUser._id) && !friendRequest && (
+              {userProfile.friends.includes(authUser._id) && !friendRequest && userProfile._id !== authUser._id && (
                 <>
                   <button
                     className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
@@ -160,7 +175,7 @@ const UserPage = () => {
                   </button>
                 </>
               )}
-              {!userProfile.friends.includes(authUser._id) && friendRequest?.status !== "pending" && (
+              {!userProfile.friends.includes(authUser._id) && friendRequest?.status !== "pending" && userProfile._id !== authUser._id && (
                 <button
                   className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
                   onClick={() => handleAddfriend(userProfile._id, authUser._id)}
@@ -168,7 +183,7 @@ const UserPage = () => {
                   <UserRoundPlus /> Add friend
                 </button>
               )}
-              {friendRequest?.status === "pending" && friendRequest?.to === authUser._id && (
+              {friendRequest?.status === "pending" && friendRequest?.to === authUser._id && userProfile._id !== authUser._id && (
                 <div className="flex flex-row gap-2">
                   <button
                     className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl"
@@ -184,11 +199,19 @@ const UserPage = () => {
                   </button>
                 </div>
               )}
-              {friendRequest?.status === "pending" && friendRequest?.from === authUser._id && (
+              {friendRequest?.status === "pending" && friendRequest?.from === authUser._id && userProfile._id !== authUser._id && (
                 <div className="bg-accent text-black cursor-pointer flex flex-row justify-around p-2 rounded-2xl gap-1">
                   <MailQuestion /> Invitation sent
                 </div>
               )}
+              {userProfile._id === authUser._id &&
+                <button
+                  className="bg-accent text-black cursor-pointer flex flex-row justify-around gap-2 p-2 rounded-2xl"
+                  onClick={() => navigate('/profile')}
+                >
+                  <UserRoundPen /> Edit profile
+                </button>
+              }
             </div>
           </div>
         </div>
@@ -197,7 +220,9 @@ const UserPage = () => {
           <div className="relative mx-auto lg:mx-0">User not found</div>
         </div>
       )}
-
+      {userProfile?._id === authUser._id &&
+        <CreatePost userProfile={userProfile} />
+      }
       <div className="w-full flex flex-col items-center gap-3 mt-5">
         {!arePostsLoading && posts ? (
           posts.map((post) => (

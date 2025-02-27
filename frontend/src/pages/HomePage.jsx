@@ -4,10 +4,12 @@ import { useProfileStore } from '../store/useProfileStore';
 import Posts from '../components/Posts.jsx';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
+import CreatePost from '../components/CreatePost.jsx';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 const HomePage = () => {
   const navigate = useNavigate();
-
+  const { authUser } = useAuthStore();
   const { getUsers, users } = useChatStore();
   const { selectedUser, setSelectedUser } = useProfileStore();
 
@@ -23,9 +25,9 @@ const HomePage = () => {
 
   return (
     <div className="h-screen bg-base-200">
-      <div className="relative pt-20 px-4">
-        <div className="relative w-full max-w-md mx-auto">
-          Create post
+      <div className="relative pt-20 px-10">
+        <div className="relative w-full mx-auto">
+          <CreatePost userProfile={authUser} />
         </div>
         <div className="mt-20">
           <Posts />
