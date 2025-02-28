@@ -22,6 +22,7 @@ import PostReactionSummary from '../components/PostReactionSummary.jsx';
 import Post from '../components/Post.jsx';
 import {isMobile} from 'react-device-detect';
 import CreatePost from '../components/CreatePost.jsx';
+import PostSkeleton from '../components/skeletons/PostSkeleton.jsx';
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const UserPage = () => {
 
   const {
     arePostsLoading,
-    posts,
+    userPosts,
     getUserPosts,
     addReactionToPost,
     addCommentToPost
@@ -112,7 +113,7 @@ const UserPage = () => {
 
   useEffect(() => {
     getUserPosts(params.id);
-  }, [getUserPosts]);
+  }, [getUserPosts, params.id]);
 
   if (isProfileLoading) return (
     <div className="flex items-center justify-center h-screen">
@@ -127,9 +128,6 @@ const UserPage = () => {
 
     return user.friends.filter(friendId => authUserFriendsSet.has(friendId)).length;
   };
-
-  console.log("authUser: ", authUser);
-  console.log("userProfle: ", userProfile);
 
   return (
     <div className="bg-base-200 mt-8 sm:p-16">
@@ -221,17 +219,20 @@ const UserPage = () => {
         </div>
       )}
       {userProfile?._id === authUser._id &&
-        <CreatePost userProfile={userProfile} />
+        <div className="w-full flex justify-center items-center">
+        <CreatePost userProfile={userProfile} isUserPage={true} />
+        </div>
       }
       <div className="w-full flex flex-col items-center gap-3 mt-5">
-        {!arePostsLoading && posts ? (
-          posts.map((post) => (
+        {!arePostsLoading && userPosts ? (
+          [...userPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((post) => (
             <Post
               key={post._id}
               post={post}
               userProfile={userProfile}
               setSelectedPost={setSelectedPost}
               addCommentToPost={addCommentToPost}
+              isUserPage={true}
             />
           ))
         ) : (
@@ -239,6 +240,9 @@ const UserPage = () => {
             <Loader />
           </div>
         )}
+        {arePostsLoading &&
+          <PostSkeleton />
+        }
       </div>
       {selectedPost && (
         <PostModal
@@ -250,6 +254,7 @@ const UserPage = () => {
           comment={comment}
           setComment={setComment}
           addReactionToPost={addReactionToPost}
+          isUserPage={true}
         />
       )}
     </div>

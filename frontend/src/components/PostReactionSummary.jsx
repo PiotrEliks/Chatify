@@ -66,7 +66,7 @@ const PostReactionSummary = ({ post }) => {
       >
         <span className="text-xs text-zinc-400">{post.comments.length} comments</span>
         {
-          showUsersWhoCommented &&
+          showUsersWhoCommented && post.comments.length !== 0 &&
           <div className="bg-base-300/80 p-2 rounded-xl absolute top-10 right-0 min-w-46 z-1 flex flex-col">
             {post.comments
               .filter((comment, index, self) =>

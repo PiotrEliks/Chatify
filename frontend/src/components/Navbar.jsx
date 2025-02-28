@@ -28,10 +28,8 @@ const Navbar = () => {
     user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log(users)
-
   return (
-    <nav className="bg-base-300 fixed z-100 w-full top-0">
+    <nav className="bg-base-300 fixed z-50 w-full top-0">
       <div className="w-screen flex flex-wrap items-center justify-between mx-auto p-4">
         <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
           <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center">

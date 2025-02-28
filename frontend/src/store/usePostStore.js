@@ -1,17 +1,53 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
-import { io } from 'socket.io-client';
 
 export const usePostsStore = create((set, get) => ({
-  posts: [],
+  allPosts: [],
+  userPosts: [],
   arePostsLoading: false,
+  isPostCreating: false,
+
+  createPost: async (postData, isUserPage) => {
+    set({ isPostCreating: true });
+    const { getUserPosts, getFriendsPosts } = get();
+    try {
+      const res = await axiosInstance.post("/posts/create", postData);
+      if (isUserPage) {
+        getUserPosts(postData.userId);
+      } else {
+        getFriendsPosts(postData.userId);
+      }
+    } catch (error) {
+      console.log("Error in createPost", error);
+    } finally {
+      set({ isPostCreating: false });
+    }
+  },
+
+  deletePost: async (postId, userId, isUserPage) => {
+    set({ arePostsLoading: true });
+    const { getUserPosts, getFriendsPosts } = get();
+    try {
+      const res = await axiosInstance.delete(`/posts/delete/${postId}`);
+      if (isUserPage) {
+        getUserPosts(userId);
+      } else {
+        getFriendsPosts(userId);
+      }
+      toast.success("Post has been deleted")
+    } catch (error) {
+      console.log("Error in deletePost", error);
+    } finally {
+      set({ arePostsLoading: false });
+    }
+  },
 
   getAllPosts: async () => {
     set({ arePostsLoading: true });
     try {
       const res = await axiosInstance.get("/posts/all");
-      set({ posts: res.data });
+      set({ allPosts: res.data });
     } catch (error) {
       console.log("Error in getAllPosts", error);
     } finally {
@@ -23,7 +59,7 @@ export const usePostsStore = create((set, get) => ({
     set({ arePostsLoading: true });
     try {
       const res = await axiosInstance.get(`/posts/user/${userId}`);
-      set({ posts: res.data });
+      set({ userPosts: res.data });
     } catch (error) {
       console.log("Error in getUserPosts", error);
     } finally {
@@ -31,54 +67,81 @@ export const usePostsStore = create((set, get) => ({
     }
   },
 
-  addReactionToPost: async(postId, userId, reactionType) => {
-    const { posts } = get();
+  getFriendsPosts: async (userId) => {
+    set({ arePostsLoading: true });
+    try {
+      const res = await axiosInstance.get(`/posts/friends/${userId}`);
+      set({ allPosts: res.data });
+    } catch (error) {
+      console.log("Error in getFriendsPosts", error);
+    } finally {
+      set({ arePostsLoading: false });
+    }
+  },
+
+  addReactionToPost: async (postId, userId, reactionType, isUserPage) => {
+    const { allPosts, userPosts } = get();
     try {
       const res = await axiosInstance.put(`/posts/addReaction/${postId}`, {
-        userId: userId,
-        reactionType: reactionType,
+        userId,
+        reactionType,
       });
-      set({ posts: posts.map(post => post._id === res.data._id ? res.data : post) });
+
+      const updatedPosts = (posts) =>
+        posts.map((post) => (post._id === res.data._id ? res.data : post));
+
+      if (isUserPage) {
+        set({ userPosts: updatedPosts(userPosts) });
+      } else {
+        set({ allPosts: updatedPosts(allPosts) });
+      }
+
       toast.success("Reaction has been added");
     } catch (error) {
       console.log("Error in addReactionToPost", error);
     }
   },
 
-  deleteReactionFromPost: async(postId, userId) => {
-    const { posts } = get();
+  deleteReactionFromPost: async(postId, userId, isUserPage) => {
+    const { allPosts, userPosts } = get();
     try {
       const res = await axiosInstance.put(`/posts/deleteReaction/${postId}`, {
         userId: userId,
       });
-      set({ posts: posts.map(post => post._id === res.data._id ? res.data : post) });
+      const updatedPosts = (posts) =>
+        posts.map((post) => (post._id === res.data._id ? res.data : post));
+
+      if (isUserPage) {
+        set({ userPosts: updatedPosts(userPosts) });
+      } else {
+        set({ allPosts: updatedPosts(allPosts) });
+      }
       toast.success("Reaction has been deleted");
     } catch (error) {
       console.log("Error in addReactionToPost", error);
     }
   },
 
-  addCommentToPost: async (postId, text, userId) => {
-    const { posts } = get();
+  addCommentToPost: async (postId, text, userId, isUserPage) => {
+    const { allPosts, userPosts } = get();
     try {
       const res = await axiosInstance.put(`/posts/addComment/${postId}`, {
-        userId: userId,
-        text: text,
+        userId,
+        text,
       });
-      set({ posts: posts.map(post => post._id === res.data._id ? res.data : post) });
+
+      const updatedPosts = (posts) =>
+        posts.map((post) => (post._id === res.data._id ? res.data : post));
+
+      if (isUserPage) {
+        set({ userPosts: updatedPosts(userPosts) });
+      } else {
+        set({ allPosts: updatedPosts(allPosts) });
+      }
+
       toast.success("Comment has been added");
     } catch (error) {
-      console.log("Error in addCommentToPost", error)
+      console.log("Error in addCommentToPost", error);
     }
   },
-
-  getPost: async (postId) => {
-    try {
-      const res = await axiosInstance.get(`/posts/post/${postId}`);
-      return res.data;
-    } catch (error) {
-      console.log("Error in getPost", error)
-    }
-  },
-
 }));

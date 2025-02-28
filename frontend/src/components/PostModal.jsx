@@ -16,6 +16,7 @@ const PostModal = ({
   addComment,
   comment,
   setComment,
+  isUserPage
 }) => {
   const inputElement = useRef();
   const modalRef = useRef();
@@ -24,7 +25,7 @@ const PostModal = ({
   };
   const navigate = useNavigate();
   const postFromStore = usePostsStore(state =>
-    state.posts.find(p => p._id === post2._id)
+    isUserPage ? state.userPosts.find(p => p._id === post2._id) : state.allPosts.find(p => p._id === post2._id)
   );
   const [post, setPost] = useState(post2);
 
@@ -76,7 +77,7 @@ const onEmojiClick = (emojiObject) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+    <div className="fixed inset-0 z-51 flex items-center justify-center bg-black/80">
       <div ref={modalRef} className="bg-base-100 w-full max-w-2xl h-[100vh] flex flex-col relative sm:w-11/12 sm:p-2 sm:h-[90vh] sm:rounded-lg ">
         <button
           onClick={onClose}
@@ -111,7 +112,7 @@ const onEmojiClick = (emojiObject) => {
               <PostReactionSummary post={post}/>
             </div>
             <div className="w-full flex flex-row items-center justify-evenly mb-2 border-y border-accent">
-              <ReactionButton post={post} authUser={authUser} />
+              <ReactionButton post={post} authUser={authUser} isUserPage={isUserPage} />
               <button
                 className="h-full flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer"
                 onClick={focusInput}
@@ -168,7 +169,7 @@ const onEmojiClick = (emojiObject) => {
             }
             <button
               onClick={() => {
-                addComment(post._id, comment, authUser._id);
+                addComment(post._id, comment, authUser._id, isUserPage);
                 setComment('');
               }}
               disabled={!comment}

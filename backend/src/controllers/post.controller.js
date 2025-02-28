@@ -184,12 +184,12 @@ export const getFriendsPosts = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const friendIds = user.friends;
+    const friendIds = [...user.friends, userId]
     const posts = await Post.find({ userId: { $in: friendIds } })
       .sort({ createdAt: -1 }).populate({
         path: 'comments',
         populate: { path: 'userId', select: 'fullName profilePic'}
-      }).populate('userId', 'fullName profilePic');;
+      }).populate('userId', 'fullName profilePic');
 
     if (!posts) {
       return res.status(404).json({ message: 'Posts not found' });

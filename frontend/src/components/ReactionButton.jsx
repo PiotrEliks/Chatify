@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ThumbsUp, Heart, Laugh, Frown } from 'lucide-react';
 import { usePostsStore } from '../store/usePostStore';
 
-const ReactionButton = ({ post, authUser }) => {
+const ReactionButton = ({ post, authUser, isUserPage }) => {
   const { addReactionToPost, deleteReactionFromPost } = usePostsStore();
   const [showReactionsList, setShowReactionsList] = useState(false);
 
@@ -11,14 +11,14 @@ const ReactionButton = ({ post, authUser }) => {
   );
 
   const handleRemoveReaction = () => {
-    deleteReactionFromPost(post._id, authUser._id);
+    deleteReactionFromPost(post._id, authUser._id, isUserPage);
   };
 
   const handleAddReaction = (reactionType) => {
     if (userReaction && userReaction.type === reactionType) {
-      deleteReactionFromPost(post._id, authUser._id);
+      deleteReactionFromPost(post._id, authUser._id, isUserPage);
     } else {
-      addReactionToPost(post._id, authUser._id, reactionType);
+      addReactionToPost(post._id, authUser._id, reactionType, isUserPage);
     }
     setShowReactionsList(false);
   };

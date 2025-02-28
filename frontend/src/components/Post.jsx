@@ -2,14 +2,15 @@ import React, { useEffect, useState, useRef } from 'react'
 import { format, isToday, isThisYear } from 'date-fns';
 import CommentsList from '../components/CommentsList.jsx';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
-import { ThumbsUp, MessageSquare, Forward, SendHorizontal, Smile } from 'lucide-react';
+import { ThumbsUp, MessageSquare, Forward, SendHorizontal, Smile, EllipsisVertical } from 'lucide-react';
 import ReactionButton from '../components/ReactionButton.jsx';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import Picker from "emoji-picker-react";
 import {isMobile} from 'react-device-detect';
+import { usePostsStore } from '../store/usePostStore.js';
 
-const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
+const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage }) => {
   const navigate = useNavigate();
   const inputElement = useRef();
   const focusInput = () => {
@@ -51,18 +52,39 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
     setShowPicker(false);
   };
 
+  const [showPostSettings, setShowPostSettings] = useState(false);
+  const { deletePost } = usePostsStore();
+
   return (
     <div className="lg:w-3xl w-full bg-base-100 p-5">
-      <div className="flex flex-row items-center gap-3">
+      <div className="flex flex-row items-center gap-3 relative">
         <img
           src={post.userId.profilePic || "/avatar.png"}
           alt={post.userId.fullName}
           className="w-12 h-12 object-cover rounded-full border-4 border-white shadow-lg"
         />
         <div className="flex flex-col">
-          <span className="text-sm cursor-pointer" onClick={() => navigate(`/user/${post.userId}`)}>{post.userId.fullName}</span>
+          <span className="text-sm cursor-pointer" onClick={() => navigate(`/user/${post.userId._id}`)}>{post.userId.fullName}</span>
           <span className="text-xs text-zinc-400">{formatDate(post.createdAt)}</span>
         </div>
+        {post.userId._id === authUser._id &&
+          <div
+            className="absolute right-0 top-0 cursor-pointer"
+            onClick={() => setShowPostSettings(!showPostSettings)}
+          >
+            <EllipsisVertical className="size-5" />
+          </div>
+        }
+        {showPostSettings &&
+          <div className="absolute right-0 top-6 bg-base-300 py-3 rounded-2xl">
+            <div
+              className="text-xs hover:bg-base-100 cursor-pointer px-5 py-2 w-ful"
+              onClick={() => deletePost(post._id, authUser._id, isUserPage)}
+            >
+                Delete post
+              </div>
+          </div>
+        }
       </div>
       <div className="flex flex-col w-full items-center mt-5">
         <span className="self-start mb-5">{post.text}</span>
@@ -78,7 +100,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
         <PostReactionSummary post={post}/>
       </div>
       <div className="w-full flex flex-row items-center justify-evenly mb-2 border-y border-accent">
-        <ReactionButton post={post} authUser={authUser} />
+        <ReactionButton post={post} authUser={authUser} isUserPage={isUserPage} />
         <button
           className="h-full  flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer text-sm"
           onClick={focusInput}
@@ -114,7 +136,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost }) => {
           className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
           disabled={!comment}
           onClick={() => {
-            addCommentToPost(post._id, comment, authUser._id);
+            addCommentToPost(post._id, comment, authUser._id, isUserPage);
             setComment('');
           }}
           title="Post comment"

@@ -10,26 +10,14 @@ import { useAuthStore } from '../store/useAuthStore.js';
 const HomePage = () => {
   const navigate = useNavigate();
   const { authUser } = useAuthStore();
-  const { getUsers, users } = useChatStore();
-  const { selectedUser, setSelectedUser } = useProfileStore();
-
-  const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    getUsers();
-  }, [getUsers]);
-
-  const filteredUsers = users.filter(user =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
-    <div className="h-screen bg-base-200">
-      <div className="relative pt-20 px-10">
-        <div className="relative w-full mx-auto">
-          <CreatePost userProfile={authUser} />
+    <div className="bg-base-200">
+      <div className="pt-20 px-10">
+        <div className="w-full mx-auto flex items-center justify-center">
+          <CreatePost userProfile={authUser} isUserPage={false} />
         </div>
-        <div className="mt-20">
+        <div className="mt-5">
           <Posts />
         </div>
       </div>
