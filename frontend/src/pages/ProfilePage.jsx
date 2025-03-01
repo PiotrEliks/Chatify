@@ -4,13 +4,13 @@ import { Camera, Mail, User, BriefcaseBusiness, Heart, House, GraduationCap, Pen
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
-  const [profileImage, setProfileImage] = useState(null);
-  const [backgroundImage, setBackgroundImage] = useState(null);
-  const [relationshipStatus, setRelationshipStatus] = useState(null);
-  const [biogram, setBiogram] = useState(null);
-  const [education, setEducation] = useState(null);
-  const [city, setCity] = useState(null);
-  const [work, setWork] = useState(null);
+  const [profileImage, setProfileImage] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState("");
+  const [relationshipStatus, setRelationshipStatus] = useState("");
+  const [biogram, setBiogram] = useState("");
+  const [education, setEducation] = useState("");
+  const [city, setCity] = useState("");
+  const [work, setWork] = useState("");
   const [newInformationProvided, setNewInformationProvided] = useState(false);
   const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -57,8 +57,6 @@ const ProfilePage = () => {
     await updateProfile(updateData);
     setNewInformationProvided(false);
   };
-
-  console.log(authUser)
 
   return (
     <div className="pt-20">

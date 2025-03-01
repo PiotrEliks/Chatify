@@ -12,12 +12,12 @@ const HomePage = () => {
   const { authUser } = useAuthStore();
 
   return (
-    <div className="bg-base-200">
-      <div className="pt-20 px-10">
-        <div className="w-full mx-auto flex items-center justify-center">
+    <div className="w-full bg-base-200">
+      <div className="pt-25 w-full px-2 sm:px-15 flex flex-col gap-5 items-center">
+        <div className="w-full sm:max-w-3xl">
           <CreatePost userProfile={authUser} isUserPage={false} />
         </div>
-        <div className="mt-5">
+        <div className="w-full sm:max-w-3xl">
           <Posts />
         </div>
       </div>

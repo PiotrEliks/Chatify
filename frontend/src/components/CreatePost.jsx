@@ -46,7 +46,7 @@ const CreatePost = ({ userProfile, isUserPage }) => {
   };
 
   return (
-    <div className="w-3xl bg-base-100 mt-5 p-5 flex flex-col gap-4 justify-center items-center">
+    <div className="w-full bg-base-100 p-5 rounded-xl">
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">

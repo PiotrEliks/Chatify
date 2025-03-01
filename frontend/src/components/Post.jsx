@@ -56,7 +56,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage
   const { deletePost } = usePostsStore();
 
   return (
-    <div className="lg:w-3xl w-full bg-base-100 p-5">
+    <div className="w-full bg-base-100 p-5 rounded-xl">
       <div className="flex flex-row items-center gap-3 relative">
         <img
           src={post.userId.profilePic || "/avatar.png"}

@@ -19,7 +19,7 @@ const Posts = () => {
   if (arePostsLoading) return <PostSkeleton />;
 
   return (
-    <div className="w-full flex flex-col items-center gap-3 mt-5">
+    <div className="flex flex-col items-center gap-6">
         {!arePostsLoading && allPosts ? (
           [...allPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((post) => (
             <Post

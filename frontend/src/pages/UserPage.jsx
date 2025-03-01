@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { usePostsStore } from '../store/usePostStore';
 import { format, isToday, isThisYear } from 'date-fns';
-import { ThumbsUp, MessageSquare, Forward, SendHorizontal, UserRoundPen, Image, Send } from 'lucide-react';
+import { Camera, Mail, User, BriefcaseBusiness, Heart, House, GraduationCap, PencilLine, UserRoundPen } from 'lucide-react'
 import ReactionButton from '../components/ReactionButton.jsx';
 import PostModal from '../components/PostModal.jsx';
 import CommentsList from '../components/CommentsList.jsx';
@@ -130,16 +130,15 @@ const UserPage = () => {
   };
 
   return (
-    <div className="bg-base-200 mt-8 sm:p-16">
+    <div className="bg-base-200 mt-8 p-1 sm:p-16 flex flex-col items-center">
       {userProfile !== null ? (
-        <div className="relative w-full">
+        <div className="relative w-full border-b-1">
           <img
             src={userProfile.backgroundPic || "/avatar.png"}
             alt={userProfile.name}
-            className="w-full h-96 object-cover"
+            className="w-full max-h-60 object-cover rounded-xl"
           />
-          <div className="bg-black w-full h-30 sm:bg-none sm:h-0"/>
-          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 z-10 p-2 flex flex-col bg-base-300/75 items-center w-full justify-between sm:flex-row">
+          <div className="absolute bottom-0 z-10 p-2 flex flex-col items-center w-full justify-between sm:flex-row">
             <div className="flex flex-col gap-2 items-center sm:flex-row sm:gap-5">
               <img
                 src={userProfile.profilePic || "/avatar.png"}
@@ -212,18 +211,29 @@ const UserPage = () => {
               }
             </div>
           </div>
+          <div className="w-full h-45 sm:h-30"/>
         </div>
       ) : (
         <div className="h-screen bg-base-200 pt-50">
           <div className="relative mx-auto lg:mx-0">User not found</div>
         </div>
       )}
-      {userProfile?._id === authUser._id &&
-        <div className="w-full flex justify-center items-center">
-        <CreatePost userProfile={userProfile} isUserPage={true} />
+      <div className="w-full flex flex-col sm:flex-row sm:gap-5">
+        <div className="w-full sm:max-w-1/3 bg-base-100 rounded-xl p-5 flex flex-col gap-2 mt-5">
+          <span className="font-bold text-xl">Information</span>
+          <span className="text-sm flex flex-row gap-2 items-center"><House />{userProfile.city}</span>
+          <span className="text-sm flex flex-row gap-2 items-center"><GraduationCap />{userProfile.education}</span>
+          <span className="text-sm flex flex-row gap-2 items-center"><BriefcaseBusiness />{userProfile.work}</span>
+          <span className="text-sm flex flex-row gap-2 items-center"><Heart />{userProfile.relationshipStatus}</span>
         </div>
-      }
-      <div className="w-full flex flex-col items-center gap-3 mt-5">
+        {userProfile?._id === authUser._id &&
+          <div className="w-full sm:max-w-2/3 sm:h-full flex justify-center items-center mt-5">
+            <CreatePost userProfile={userProfile} isUserPage={true} />
+          </div>
+        }
+      </div>
+
+      <div className="w-full sm:max-w-3xl flex flex-col items-center gap-3 mt-5">
         {!arePostsLoading && userPosts ? (
           [...userPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((post) => (
             <Post
