@@ -156,8 +156,6 @@ export const updateProfile = async (req, res) => {
       updateData.work = work;
     }
 
-    console.log(updateData)
-
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: "No update data provided" });
     }

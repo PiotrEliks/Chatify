@@ -153,11 +153,9 @@ export const rejectRequest = async (req, res) => {
 
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("friend-request-rejected", friendRequest);
-      console.log(friendRequest)
     }
     if (senderSocketId) {
       io.to(senderSocketId).emit("friend-request-rejected", friendRequest);
-      console.log(friendRequest)
     }
 
     const responseData = { ...friendRequest._doc };

@@ -28,6 +28,48 @@ const Navbar = () => {
     user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const [showNotification, setShowNotification] = useState(false);
+  const [newMessagesCount, setNewMessagesCount] = useState({});
+  const socket = useAuthStore((state) => state.socket);
+  useEffect(() => {
+      if (!socket) return;
+
+      const handleNewMessage = (newMessage) => {
+        if (!selectedUser || newMessage.senderId !== selectedUser._id) {
+          const conversationId = newMessage.conversationId;
+          setNewMessagesCount((prevCounts) => ({
+            ...prevCounts,
+            [conversationId]: (prevCounts[conversationId] || 0) + 1,
+          }));
+          setShowNotification(true);
+        }
+      };
+
+      const handleSeenMessage = (conversationId) => {
+        setNewMessagesCount((prevCounts) => {
+          const updatedCounts = { ...prevCounts };
+          if (updatedCounts[conversationId] > 0) {
+            updatedCounts[conversationId] -= 1;
+          } else {
+            delete updatedCounts[conversationId];
+          }
+
+          const totalNewMessages = Object.values(updatedCounts).reduce((sum, count) => sum + count, 0);
+          setShowNotification(totalNewMessages > 0);
+
+          return { ...updatedCounts };
+        });
+      };
+
+      socket.on("newMessageReceived", (newMessage) => handleNewMessage(newMessage));
+      socket.on("messageSeen", (newMessage) => handleSeenMessage(newMessage.conversationId));
+
+      return () => {
+        socket.off("newMessageReceived", (newMessage) => handleNewMessage(newMessage));
+        socket.off("messageSeen", (newMessage) => handleSeenMessage(newMessage.conversationId));
+      };
+    }, [selectedUser, socket, showNotification, selectedUser]);
+
   return (
     <nav className="bg-base-300 fixed z-50 w-full top-0">
       <div className="w-screen flex flex-wrap items-center justify-between mx-auto p-4">
@@ -90,9 +132,14 @@ const Navbar = () => {
         <div className="relative flex items-center sm:order-2 space-x-3 sm:space-x-2">
           {authUser && (
             <>
-              <Link to="/chat" className="hidden sm:block p-2 hover:bg-base-100 rounded-lg">
+              <Link to="/chat" className="hidden sm:block p-2 hover:bg-base-100 rounded-lg relative">
                 <div className="flex flex-row justify-center items-center gap-1">
                   <MessageSquare className="w-5 h-5" /> Chat
+                  {showNotification &&
+                    <div className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-600 text-white rounded-full px-1 text-xs">
+                      {Object.keys(newMessagesCount).length}
+                    </div>
+                  }
                 </div>
               </Link>
               <Link to="/settings" className="hidden sm:block p-2 hover:bg-base-100 rounded-lg">
@@ -110,6 +157,11 @@ const Navbar = () => {
               </button>
               <button data-collapse-toggle="navbar-search" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg sm:hidden hover:bg-base-100 focus:outline-none focus:ring-2 focus:ring-base-100ark:hover:bg-base-100 dark:focus:ring-base-100 cursor-pointer" aria-controls="navbar-search" aria-expanded="false" onClick={toggleMenu}>
                 <span className="sr-only">Open main menu</span>
+                {showNotification && !isMenuOpen &&
+                    <div className="absolute top-0 right-0  bg-red-600 text-white rounded-full px-1 text-xs">
+                      {Object.keys(newMessagesCount).length}
+                    </div>
+                  }
                 <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
                 </svg>
@@ -195,7 +247,18 @@ const Navbar = () => {
                 )}
               </div>
               <li>
-                <Link to="/chat" className="block py-2 px-3 hover:bg-base-100">Chat</Link>
+                <Link to="/chat" className="block py-2 px-3 hover:bg-base-100">
+                <div className="relative">
+                  <span className="relative">
+                    Chat
+                    {showNotification &&
+                      <div className="absolute top-0 right-0 -mr-3 -mt-2 bg-red-600 text-white rounded-full px-1 text-xs">
+                        {Object.keys(newMessagesCount).length}
+                      </div>
+                    }
+                  </span>
+                </div>
+                </Link>
               </li>
               <li>
                 <Link to="/settings" className="block py-2 px-3 hover:bg-base-100">Settings</Link>
