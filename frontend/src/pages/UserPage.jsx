@@ -221,10 +221,10 @@ const UserPage = () => {
       <div className="w-full flex flex-col sm:flex-row sm:gap-5">
         <div className="w-full sm:max-w-1/4 sm:max-h-[13rem] bg-base-100 rounded-xl p-5 flex flex-col gap-2 mt-5">
           <span className="font-bold text-xl">Information</span>
-          {userProfile?.city && <span className="text-sm flex flex-row gap-2 items-center"><House />{userProfile.city}</span>}
-          {userProfile?.education && <span className="text-sm flex flex-row gap-2 items-center"><GraduationCap />{userProfile.education}</span>}
-          {userProfile?.work && <span className="text-sm flex flex-row gap-2 items-center"><BriefcaseBusiness />{userProfile.work}</span>}
-          {userProfile?.relationshipStatus && <span className="text-sm flex flex-row gap-2 items-center"><Heart />{userProfile.relationshipStatus}</span>}
+          {userProfile?.city && <span className="text-sm flex flex-row gap-2 items-center" title="City"><House />{userProfile.city}</span>}
+          {userProfile?.education && <span className="text-sm flex flex-row gap-2 items-center" title="Education"><GraduationCap />{userProfile.education}</span>}
+          {userProfile?.work && <span className="text-sm flex flex-row gap-2 items-center" title="Work"><BriefcaseBusiness />{userProfile.work}</span>}
+          {userProfile?.relationshipStatus && <span className="text-sm flex flex-row gap-2 items-center" title="Relationship status"><Heart />{userProfile.relationshipStatus}</span>}
         </div>
         <div className="w-full sm:max-w-3xl">
           {userProfile?._id === authUser._id &&

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { format, isToday, isThisYear } from 'date-fns';
 import ReactionButton from './ReactionButton';
-import { X, SendHorizontal, MessageSquare, Forward, Smile } from 'lucide-react';
+import { X, SendHorizontal, MessageSquare, Forward, Smile, Ellipsis } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePostsStore } from '../store/usePostStore';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
@@ -76,16 +76,40 @@ const onEmojiClick = (emojiObject) => {
   setShowPicker(false);
   };
 
-  return (
-    <div className="fixed inset-0 z-51 flex items-center justify-center bg-black/80">
-      <div ref={modalRef} className="bg-base-100 w-full max-w-2xl h-[100vh] flex flex-col relative sm:w-11/12 sm:p-2 sm:h-[90vh] sm:rounded-lg ">
-        <button
-          onClick={onClose}
-          className="absolute top-1 right-1 text-xl font-bold text-white cursor-pointer sm:top-2 sm:right-5"
-        >
-          <X />
-        </button>
+  const [showPostSettings, setShowPostSettings] = useState(false);
+  const { deletePost } = usePostsStore();
 
+  return (
+    <div className="fixed inset-0 z-51 flex items-center justify-center backdrop-blur">
+      <div ref={modalRef} className="bg-base-100 w-full max-w-2xl h-[100vh] flex flex-col sm:w-11/12 sm:p-2 sm:h-[90vh] sm:rounded-lg ">
+        <div className="w-full h-8 relative">
+          {post.userId._id === authUser._id &&
+              <div
+                className="absolute right-7 top-1 cursor-pointer"
+                onClick={() => setShowPostSettings(!showPostSettings)}
+                title="Settings"
+              >
+                <Ellipsis className="size-5" />
+              </div>
+          }
+          {showPostSettings &&
+            <div className="absolute right-0 top-5 bg-base-300 py-3 rounded-2xl">
+              <div
+                className="text-xs hover:bg-base-100 cursor-pointer px-5 py-2 w-ful"
+                onClick={() => deletePost(post._id, authUser._id, isUserPage)}
+              >
+                  Delete post
+                </div>
+            </div>
+          }
+          <button
+            onClick={onClose}
+            className="absolute top-1 right-1 text-xl font-bold text-white cursor-pointer"
+            title="Close post"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
         <div className="flex-1 overflow-auto p-3 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <img
@@ -116,10 +140,14 @@ const onEmojiClick = (emojiObject) => {
               <button
                 className="h-full flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer"
                 onClick={focusInput}
+                title="Add comment"
               >
                 <MessageSquare className="size-4 sm:size-5" /> <span className="text-sm">Comment</span>
               </button>
-              <button className="h-full flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer">
+              <button
+                className="h-full flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer"
+                title="Share"
+              >
                 <Forward className="size-4 sm:size-5" /> <span className="text-sm">Share</span>
               </button>
             </div>
@@ -160,7 +188,7 @@ const onEmojiClick = (emojiObject) => {
             />
             {
               !isMobile &&
-                <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
+                <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer text-zinc-400" title="Pick emoji">
                   <Smile
                     className="w-5 h-5"
                     onClick={() => setShowPicker((val) => !val)}

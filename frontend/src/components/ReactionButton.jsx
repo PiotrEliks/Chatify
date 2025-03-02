@@ -39,13 +39,14 @@ const ReactionButton = ({ post, authUser, isUserPage }) => {
   ];
 
   return (
-    <div className="relative h-full  flex items-center justify-center rounded-ms hover:bg-zinc-800">
+    <div className="relative h-full flex items-center justify-center rounded-ms hover:bg-zinc-800">
       <button
         className={`flex flex-row items-center justify-center p-3 w-full gap-2 cursor-pointer ${
           userReaction ? "text-accent" : ""
         }`}
         onClick={handleMainButtonClick}
         onMouseEnter={() => setShowReactionsList(true)}
+        title={`${!userReaction ? 'Add reaction' : 'Delete reaction'}`}
       >
         {userReaction?.type === 'like' && <><ThumbsUp className="size-4 sm:size-5" /> <span className="text-sm">Like it!</span></>}
         {userReaction?.type === 'heart' && <><Heart className="size-4 sm:size-5" /> <span className="text-sm">Love it!</span></>}
@@ -64,6 +65,7 @@ const ReactionButton = ({ post, authUser, isUserPage }) => {
               key={r.type}
               onClick={() => handleAddReaction(r.type)}
               className="hover:bg-base-300 p-1 rounded cursor-pointer"
+              title="Add reaction"
             >
               <span className="size-10" title={r.type}>{r.icon}</span>
             </button>

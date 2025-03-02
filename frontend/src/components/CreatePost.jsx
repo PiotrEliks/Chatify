@@ -89,9 +89,9 @@ const CreatePost = ({ userProfile, isUserPage }) => {
           />
           <button
             type="button"
-            className={`flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
+            className={`flex btn btn-circle ${imagePreview ? "text-accent" : "text-zinc-400"}`}
             onClick={() => fileInputRef.current?.click()}
+            title="Select image"
           >
             <Image size={20} />
           </button>
@@ -100,8 +100,9 @@ const CreatePost = ({ userProfile, isUserPage }) => {
           type="submit"
           className="px-5 py-2 cursor-pointer bg-base-300 hover:bg-accent hover:text-base-300 rounded-2xl border-2 border-accent text-accent hover:border-base-300"
           disabled={!text.trim() && !imagePreview}
+          title="Create post"
         >
-          Publish post
+          Create post
         </button>
       </form>
     </div>

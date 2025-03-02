@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { format, isToday } from 'date-fns';
+import { format, isToday, isThisYear } from 'date-fns';
 
 const SidebarUserItem = ({ user, authUser, selected, onSelect, onlineUsers }) => {
   const { getLastMessage } = useChatStore();
@@ -10,7 +10,7 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect, onlineUsers }) =>
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return isToday(date) ? format(date, 'HH:mm') : format(date, 'dd-MM-yy');
+    return isToday(date) ? format(date, 'HH:mm') : isThisYear(date) ? format(date, 'dd-LLL') : format(date, 'dd-MM-yy');
   };
 
   useEffect(() => {
@@ -64,6 +64,7 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect, onlineUsers }) =>
       className={`
         w-full p-3 flex items-center gap-3
         hover:bg-base-300 transition-colors
+        cursor-pointer
         ${selected ? "bg-base-300 ring-1 ring-base-300" : ""}
       `}
     >
@@ -75,8 +76,8 @@ const SidebarUserItem = ({ user, authUser, selected, onSelect, onlineUsers }) =>
         />
         {
           onlineUsers.includes(user._id)
-            ? <span className="absolute bottom-0 right-0 size-3 bg-green-600 rounded-full ring-2 ring-zinc-900"/>
-            : <span className="absolute bottom-0 right-0 size-3 bg-red-600 rounded-full ring-2 ring-zinc-900"/>
+            ? <span className="absolute bottom-0 right-0 size-3 bg-green-600 rounded-full ring-2 ring-zinc-900" title="Online"/>
+            : <span className="absolute bottom-0 right-0 size-3 bg-red-600 rounded-full ring-2 ring-zinc-900" title="Offline"/>
         }
       </div>
       <div className="block text-left min-w-0">

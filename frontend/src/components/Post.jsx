@@ -7,7 +7,7 @@ import ReactionButton from '../components/ReactionButton.jsx';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import Picker from "emoji-picker-react";
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 import { usePostsStore } from '../store/usePostStore.js';
 
 const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage }) => {
@@ -71,6 +71,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage
           <div
             className="absolute right-0 top-0 cursor-pointer"
             onClick={() => setShowPostSettings(!showPostSettings)}
+            title="Settings"
           >
             <EllipsisVertical className="size-5" />
           </div>
@@ -104,10 +105,14 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage
         <button
           className="h-full  flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer text-sm"
           onClick={focusInput}
+          title="Add comment"
         >
           <MessageSquare className="size-4 sm:size-5" /> Comment
         </button>
-        <button className="h-full  flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer text-sm">
+        <button
+          className="h-full  flex flex-row gap-2 items-center justify-center p-3 rounded-ms hover:bg-zinc-800 cursor-pointer text-sm"
+          title="Share"
+        >
           <Forward className="size-4 sm:size-5" /> Share
         </button>
       </div>
@@ -125,7 +130,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage
         />
         {
           !isMobile &&
-            <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer" title="Pick emoji">
+            <div className="absolute inset-y-0 right-8 pr-3 flex items-center cursor-pointer text-zinc-400" title="Pick emoji">
               <Smile
                 className="w-5 h-5"
                 onClick={() => setShowPicker((val) => !val)}
