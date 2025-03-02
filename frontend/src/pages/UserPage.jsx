@@ -219,54 +219,58 @@ const UserPage = () => {
         </div>
       )}
       <div className="w-full flex flex-col sm:flex-row sm:gap-5">
-        <div className="w-full sm:max-w-1/3 bg-base-100 rounded-xl p-5 flex flex-col gap-2 mt-5">
+        <div className="w-full sm:max-w-1/4 sm:max-h-[13rem] bg-base-100 rounded-xl p-5 flex flex-col gap-2 mt-5">
           <span className="font-bold text-xl">Information</span>
-          <span className="text-sm flex flex-row gap-2 items-center"><House />{userProfile.city}</span>
-          <span className="text-sm flex flex-row gap-2 items-center"><GraduationCap />{userProfile.education}</span>
-          <span className="text-sm flex flex-row gap-2 items-center"><BriefcaseBusiness />{userProfile.work}</span>
-          <span className="text-sm flex flex-row gap-2 items-center"><Heart />{userProfile.relationshipStatus}</span>
+          {userProfile?.city && <span className="text-sm flex flex-row gap-2 items-center"><House />{userProfile.city}</span>}
+          {userProfile?.education && <span className="text-sm flex flex-row gap-2 items-center"><GraduationCap />{userProfile.education}</span>}
+          {userProfile?.work && <span className="text-sm flex flex-row gap-2 items-center"><BriefcaseBusiness />{userProfile.work}</span>}
+          {userProfile?.relationshipStatus && <span className="text-sm flex flex-row gap-2 items-center"><Heart />{userProfile.relationshipStatus}</span>}
         </div>
-        {userProfile?._id === authUser._id &&
-          <div className="w-full sm:max-w-2/3 sm:h-full flex justify-center items-center mt-5">
+        <div className="w-full sm:max-w-3xl">
+          {userProfile?._id === authUser._id &&
+          <div className="w-full flex justify-center items-center mt-5">
             <CreatePost userProfile={userProfile} isUserPage={true} />
           </div>
-        }
+          }
+            <div className="w-full sm:max-w-3xl flex flex-col items-center gap-3 mt-5">
+              {!arePostsLoading && userPosts ? (
+                [...userPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((post) => (
+                  <Post
+                    key={post._id}
+                    post={post}
+                    userProfile={userProfile}
+                    setSelectedPost={setSelectedPost}
+                    addCommentToPost={addCommentToPost}
+                    isUserPage={true}
+                  />
+                ))
+              ) : (
+                <div>
+                  <Loader />
+                </div>
+              )}
+              {arePostsLoading &&
+                <PostSkeleton />
+              }
+            </div>
+            {selectedPost && (
+              <PostModal
+                post2={selectedPost}
+                userProfile={userProfile}
+                authUser={authUser}
+                onClose={() => setSelectedPost(null)}
+                addComment={addCommentToPost}
+                comment={comment}
+                setComment={setComment}
+                addReactionToPost={addReactionToPost}
+                isUserPage={true}
+              />
+            )}
+        </div>
+
       </div>
 
-      <div className="w-full sm:max-w-3xl flex flex-col items-center gap-3 mt-5">
-        {!arePostsLoading && userPosts ? (
-          [...userPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((post) => (
-            <Post
-              key={post._id}
-              post={post}
-              userProfile={userProfile}
-              setSelectedPost={setSelectedPost}
-              addCommentToPost={addCommentToPost}
-              isUserPage={true}
-            />
-          ))
-        ) : (
-          <div>
-            <Loader />
-          </div>
-        )}
-        {arePostsLoading &&
-          <PostSkeleton />
-        }
-      </div>
-      {selectedPost && (
-        <PostModal
-          post2={selectedPost}
-          userProfile={userProfile}
-          authUser={authUser}
-          onClose={() => setSelectedPost(null)}
-          addComment={addCommentToPost}
-          comment={comment}
-          setComment={setComment}
-          addReactionToPost={addReactionToPost}
-          isUserPage={true}
-        />
-      )}
+
     </div>
   );
 };

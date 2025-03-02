@@ -61,7 +61,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage
         <img
           src={post.userId.profilePic || "/avatar.png"}
           alt={post.userId.fullName}
-          className="w-12 h-12 object-cover rounded-full border-4 border-white shadow-lg"
+          className="w-12 h-12 object-cover rounded-full border-2 border-white shadow-lg"
         />
         <div className="flex flex-col">
           <span className="text-sm cursor-pointer" onClick={() => navigate(`/user/${post.userId._id}`)}>{post.userId.fullName}</span>

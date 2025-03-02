@@ -48,7 +48,7 @@ const CreatePost = ({ userProfile, isUserPage }) => {
   return (
     <div className="w-full bg-base-100 p-5 rounded-xl">
       {imagePreview && (
-        <div className="mb-3 flex items-center gap-2">
+        <div className="mb-3 flex items-center justify-center gap-2">
           <div className="relative">
             <img
               src={imagePreview}
@@ -98,7 +98,7 @@ const CreatePost = ({ userProfile, isUserPage }) => {
         </div>
         <button
           type="submit"
-          className="px-5 py-2 cursor-pointer hover:text-accent bg-base-300 rounded-4xl border-1"
+          className="px-5 py-2 cursor-pointer bg-base-300 hover:bg-accent hover:text-base-300 rounded-2xl border-2 border-accent text-accent hover:border-base-300"
           disabled={!text.trim() && !imagePreview}
         >
           Publish post

@@ -187,6 +187,9 @@ export const getFriendsPosts = async (req, res) => {
     const friendIds = [...user.friends, userId]
     const posts = await Post.find({ userId: { $in: friendIds } })
       .sort({ createdAt: -1 }).populate({
+        path: 'reactions',
+        populate: { path: 'userId', select: 'fullName'}
+      }).populate({
         path: 'comments',
         populate: { path: 'userId', select: 'fullName profilePic'}
       }).populate('userId', 'fullName profilePic');
