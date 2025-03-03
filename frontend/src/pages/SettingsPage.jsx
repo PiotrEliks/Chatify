@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { THEMES } from "../constants";
 import { useThemeStore } from "../store/useThemeStore";
 import { Send } from "lucide-react";
@@ -9,6 +10,10 @@ const PREVIEW_MESSAGES = [
 
 const SettingsPage = () => {
   const { theme, setTheme } = useThemeStore();
+
+  useEffect(() => {
+    document.title = "Settings | Chatify";
+  }, []);
 
   return (
     <div className="h-screen container mx-auto px-4 pt-20 max-w-5xl">

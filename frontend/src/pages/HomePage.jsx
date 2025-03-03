@@ -11,6 +11,10 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { authUser } = useAuthStore();
 
+  useEffect(() => {
+    document.title = "Chatify";
+  }, []);
+
   return (
     <div className="w-full bg-base-200">
       <div className="pt-25 w-full px-2 sm:px-15 flex flex-col gap-5 items-center">

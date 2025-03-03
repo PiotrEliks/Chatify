@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuthStore } from '../store/useAuthStore';
 import { Mail, MessageSquare, User, Lock, EyeOff, Eye, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,10 @@ import AuthImagePattern from '../components/AuthImagePattern.jsx';
 import toast from 'react-hot-toast';
 
 const SignUpPage = () => {
+  useEffect(() => {
+    document.title = "SignUp | Chatify";
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",

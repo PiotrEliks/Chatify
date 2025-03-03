@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuthStore } from '../store/useAuthStore';
 import { Eye, EyeOff, Loader2, Lock, MessageSquare, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,10 @@ import AuthImagePattern from '../components/AuthImagePattern';
 import { useSettingsStore } from '../store/useSettingsStore';
 
 const LoginPage = () => {
+  useEffect(() => {
+    document.title = "Login | Chatify";
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     identifier: "",

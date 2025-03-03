@@ -115,6 +115,10 @@ const UserPage = () => {
     getUserPosts(params.id);
   }, [getUserPosts, params.id]);
 
+  useEffect(() => {
+    document.title = `${userProfile.fullName} | Chatify`;
+  }, [userProfile]);
+
   if (isProfileLoading) return (
     <div className="flex items-center justify-center h-screen">
       <Loader className="w-10 h-10 animate-bounce" />
