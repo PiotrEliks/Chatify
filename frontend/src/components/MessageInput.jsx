@@ -4,8 +4,10 @@ import { Image, Send, X, Smile } from "lucide-react";
 import toast from "react-hot-toast";
 import Picker, { Emoji } from "emoji-picker-react";
 import { isMobile } from 'react-device-detect';
+import { useThemeStore } from '../store/useThemeStore.js';
 
 const MessageInput = () => {
+  const { theme } = useThemeStore();
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -133,7 +135,7 @@ const MessageInput = () => {
           }
           {showPicker && (
             <div className="absolute z-2 scale-50 bottom-0 translate-y-18 right-0 translate-x-22 lg:scale-80 lg:translate-y-0 lg:translate-x-8">
-              <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
+              <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} theme={theme}/>
             </div>
           )}
           <button

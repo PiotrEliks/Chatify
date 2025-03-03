@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import Picker from "emoji-picker-react";
 import { isMobile } from 'react-device-detect';
 import { usePostsStore } from '../store/usePostStore.js';
+import { useThemeStore } from '../store/useThemeStore.js';
 
 const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage }) => {
+  const { theme } = useThemeStore();
   const navigate = useNavigate();
   const inputElement = useRef();
   const focusInput = () => {
@@ -150,7 +152,7 @@ const Post = ({ post, userProfile, setSelectedPost, addCommentToPost, isUserPage
         </button>
         {showPicker && (
           <div className="absolute z-2 scale-50 bottom-0 translate-y-18 right-0 translate-x-22 lg:scale-80 lg:translate-y-0 lg:translate-x-8">
-            <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
+            <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} theme={theme} />
           </div>
         )}
       </div>

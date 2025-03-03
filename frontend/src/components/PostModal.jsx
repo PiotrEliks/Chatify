@@ -7,6 +7,7 @@ import { usePostsStore } from '../store/usePostStore';
 import PostReactionSummary from '../components/PostReactionSummary.jsx';
 import Picker from "emoji-picker-react";
 import {isMobile} from 'react-device-detect';
+import { useThemeStore } from '../store/useThemeStore.js';
 
 const PostModal = ({
   post2,
@@ -18,6 +19,7 @@ const PostModal = ({
   setComment,
   isUserPage
 }) => {
+  const { theme } = useThemeStore();
   const inputElement = useRef();
   const modalRef = useRef();
   const focusInput = () => {
@@ -207,7 +209,7 @@ const onEmojiClick = (emojiObject) => {
             </button>
             {showPicker && (
               <div className="absolute z-2 bottom-0 right-0 scale-80">
-                <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
+                <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} theme={theme} />
               </div>
             )}
           </div>
