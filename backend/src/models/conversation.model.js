@@ -28,6 +28,17 @@ const conversationSchema = new mongoose.Schema(
         ref: 'User'
       },
     },
+    messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message"
+      }
+    ],
+    images: [
+      {
+        type: String
+      }
+    ]
   },
   { timestamps: true }
 );

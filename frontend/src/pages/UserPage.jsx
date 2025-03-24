@@ -116,7 +116,7 @@ const UserPage = () => {
   }, [getUserPosts, params.id]);
 
   useEffect(() => {
-    document.title = `${userProfile.fullName} | Chatify`;
+    document.title = `${userProfile?.fullName} | Chatify`;
   }, [userProfile]);
 
   if (isProfileLoading) return (

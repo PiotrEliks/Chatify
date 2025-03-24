@@ -21,14 +21,22 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId } = req.params;
     const senderId = req.user._id;
 
-    const messages = await Message.find({
-      $or:[
-        { senderId: senderId, receiverId: userToChatId },
-        { senderId: userToChatId, receiverId: senderId }
-      ]
+    const conversation = await Conversation.findOne({
+      users: { $all: [senderId, userToChatId] }
     });
 
-    res.status(200).json(messages);
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    const messages = await Message.find({
+      conversationId: conversation._id
+    }).sort({ createdAt: 1 });
+
+    res.status(200).json({
+      conversation,
+      messages,
+    });
   } catch (error) {
     console.log("Error in getMessages: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -42,9 +50,7 @@ export const sendMessage = async (req, res) => {
     const senderId = req.user._id;
 
     let conversation = await Conversation.findOne({
-      users: {
-        $all: [senderId, receiverId]
-      }
+      users: { $all: [senderId, receiverId] }
     });
 
     if (!conversation) {
@@ -55,8 +61,8 @@ export const sendMessage = async (req, res) => {
 
     let imageUrl;
     if (image) {
-      const uploadReponse = await cloudinary.uploader.upload(image);
-      imageUrl = uploadReponse.secure_url;
+      const uploadResponse = await cloudinary.uploader.upload(image);
+      imageUrl = uploadResponse.secure_url;
     }
 
     const newMessage = new Message({
@@ -65,13 +71,15 @@ export const sendMessage = async (req, res) => {
       text,
       image: imageUrl,
       conversationId: conversation._id,
-      seenBy: [
-        senderId
-      ]
+      seenBy: [senderId]
     });
 
     await newMessage.save();
 
+    conversation.messages.push(newMessage._id);
+    if (imageUrl) {
+      conversation.images.push(imageUrl);
+    }
     conversation.lastMessage = {
       text: newMessage.text,
       timestamp: newMessage.timestamp,
@@ -95,6 +103,7 @@ export const sendMessage = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const getLastMessage = async (req, res) => {
   try {
@@ -135,6 +144,23 @@ export const markMessageAsSeen = async (req, res) => {
     return res.status(200).json(message);
   } catch (error) {
     console.error('Error in markMessageAsSeen: ', error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getConversationDetails = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const conversation = await Conversation.findById(conversationId)
+      .populate("messages");
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    res.status(200).json(conversation);
+  } catch (error) {
+    console.log("Error in getConversationDetails: ", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
