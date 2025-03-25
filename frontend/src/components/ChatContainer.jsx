@@ -6,6 +6,7 @@ import MessageSkeleton from "./skeletons/MessageSkeleton.jsx";
 import ChatContainerMessageItem from "./ChatContainerMessageItem.jsx";
 import { useAuthStore } from "../store/useAuthStore";
 import { ArrowDown } from 'lucide-react';
+import ChatContainerInfo from "./ChatContainerInfo.jsx";
 
 const ChatContainer = () => {
   const {
@@ -18,7 +19,8 @@ const ChatContainer = () => {
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
-
+  const [showInfo, setShowInfo] = useState(false);
+  
   useEffect(() => {
     getMessages(selectedUser._id);
 
@@ -31,7 +33,7 @@ const ChatContainer = () => {
     if (messageEndRef.current && messages) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, showInfo]);
 
   const messagesContainerRef = useRef(null);
   const [isScrolledUp, setIsScrolledUp] = useState(false);
@@ -55,20 +57,23 @@ const ChatContainer = () => {
 
   return (
     <div className="w-full flex-1 flex flex-col overflow-auto relative">
-      <ChatHeader />
-
-      <div
+      <ChatHeader showInfo={showInfo} setShowInfo={setShowInfo} />
+      {showInfo && <ChatContainerInfo />}
+      {
+        !showInfo &&
+        <>
+        <div
         className="flex-1 overflow-y-auto p-4 space-y-4"
         ref={messagesContainerRef}
         onScroll={handleScroll}
-      >
+        >
         {messages.map((message) => (
           <ChatContainerMessageItem
-            key={message._id}
-            message={message}
-            authUser={authUser}
-            messageEndRef={messageEndRef}
-            selectedUser={selectedUser}
+          key={message._id}
+          message={message}
+          authUser={authUser}
+          messageEndRef={messageEndRef}
+          selectedUser={selectedUser}
           />
         ))}
       </div>
@@ -81,12 +86,14 @@ const ChatContainer = () => {
               setIsScrolledUp(false);
             }}
             title="Scroll down"
-          >
+            >
             <ArrowDown className="size-5 text-accent"/>
           </div>
         </div>
       }
-      <MessageInput />
+      <MessageInput />   
+      </>
+      }
     </div>
   );
 };

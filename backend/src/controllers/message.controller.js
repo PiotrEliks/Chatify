@@ -151,8 +151,7 @@ export const markMessageAsSeen = async (req, res) => {
 export const getConversationDetails = async (req, res) => {
   try {
     const { conversationId } = req.params;
-    const conversation = await Conversation.findById(conversationId)
-      .populate("messages");
+    const conversation = await Conversation.findById(conversationId);
 
     if (!conversation) {
       return res.status(404).json({ message: "Conversation not found" });

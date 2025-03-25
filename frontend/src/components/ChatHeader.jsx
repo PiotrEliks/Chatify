@@ -1,9 +1,9 @@
-import { X } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { useNavigate } from 'react-router-dom';
 
-const ChatHeader = () => {
+const ChatHeader = ({ showInfo, setShowInfo }) => {
   const navigate = useNavigate();
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
@@ -25,9 +25,17 @@ const ChatHeader = () => {
             </p>
           </div>
         </div>
-        <button onClick={() => setSelectedUser(null)}>
-          <X className="cursor-pointer"/>
-        </button>
+        <div className="flex flex-row gap-2">
+          {
+            !showInfo &&
+              <button onClick={() => setShowInfo(true)}>
+                <Info className="cursor-pointer size-5"/>
+              </button>
+          }
+          <button onClick={() => {!showInfo ? setSelectedUser(null) : setShowInfo(false)}}> 
+            <X className="cursor-pointer size-6"/>
+          </button>
+        </div>
       </div>
     </div>
   );

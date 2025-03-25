@@ -9,8 +9,9 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  conversationId: null,
   conversation: null,
-
+  
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
@@ -28,10 +29,20 @@ export const useChatStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get(`/messages/message/${userId}`);
       set({ messages: res.data.messages });
+      set({ conversationId: res.data.conversation._id });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
       set({ isMessagesLoading: false });
+    }
+  },
+
+  getConversation: async (conversationId) => {
+    try {
+      const res = await axiosInstance.get(`/messages/conversation/${conversationId}`);
+      set({ conversation: res.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
   },
 
